@@ -11,7 +11,7 @@
     "build:development": "eas build --profile development --platform ios",
     "build:preview": "eas build --profile preview --platform all",
     "build:production": "eas build --profile production --platform all",
-    "build:simulator": "eas build --profile simulator --platform ios"
+    "build:simulator": "eas build --profile simulator --platform all"
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.6",

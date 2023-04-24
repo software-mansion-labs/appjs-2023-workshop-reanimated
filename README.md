@@ -34,7 +34,7 @@ Follow one of the sections below for detailed instructions.
 
 ### For iOS simulator
 
-1. Download Development Client build [from this link](TBD)
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/phT7AmUZJsdTwkVZtLW3UF.ipa)
 2. Extract `appjsworkshop.app` file from the downloaded archive
 3. Launch your iOS simulator
 4. Drag and drop the `.app` file onto the simulator
@@ -43,7 +43,7 @@ Follow one of the sections below for detailed instructions.
 
 1. Scan the QR code below with your iOS phone:
 
-![https://expo.dev/accounts/kmagiera/projects/appjs-workshop/builds/eb4c78ce-0f05-4230-8784-0eef2fe27a69](https://user-images.githubusercontent.com/726445/172498858-006a0e3e-b3a7-4c66-9825-2a7494959f08.png)
+![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/bc9d96e3-cd03-45a0-a711-1f9f7d010d07](/QRs/ios.svg)
 
 2. Click "install" button on the website that the code opens, and confirm with "install" button on the dialog that pops up after that
 3. After app installation is completed navigate to "Settings" > "General" > "VPN & Device Management" section
@@ -53,7 +53,7 @@ Follow one of the sections below for detailed instructions.
 
 ### For Android emulator
 
-1. Download Development Client build [from this link](TBD)
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/hpj5oMjmb4Kp95Mu94WXz4.apk)
 2. Launch Android emulator on your computer
 3. Drag and drop the downloaded `.apk` file onto emulator
 
@@ -61,7 +61,7 @@ Follow one of the sections below for detailed instructions.
 
 1. Scan this QR code on your device:
 
-![https://expo.dev/accounts/kmagiera/projects/appjs-workshop/builds/9b3a85c7-a39a-4872-b392-e3b7fa8e173](https://user-images.githubusercontent.com/726445/172498765-5bcfcb5b-cd7e-4619-be24-30056f5dbc0e.png)
+![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/84d376ff-aefb-4339-9403-f571a9a3b259](/QRs/android.svg)
 
 2. Tap "install" button on the website that opens after scannig the code
 
