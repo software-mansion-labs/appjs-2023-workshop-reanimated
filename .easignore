@@ -1,0 +1,25 @@
+# Make sure to keep this in sync with .gitignore
+node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+build
+.env.secrets
+
+# macOS
+.DS_Store
+
+# Yarn
+**/.yarn/install-state.gz
+# Different to .gitignore - we don't want to send the Yarn cache to EAS!
+**/.yarn/cache
+
+.github/
+.vscode/
