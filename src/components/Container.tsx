@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { SafeAreaView, StyleProp, ViewStyle } from 'react-native'
-import { layout } from '../lib/layout'
+import { layout } from '../lib/theme'
 
 export function Container({
   children,

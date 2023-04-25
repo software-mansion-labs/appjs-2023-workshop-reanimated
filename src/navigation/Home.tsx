@@ -2,7 +2,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Container } from '../components/Container'
-import { layout } from '../lib/layout'
+import { layout } from '../lib/theme'
 import { routes, Routes } from './Routes'
 
 export function HomeScreen() {
