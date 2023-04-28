@@ -10,10 +10,10 @@ export function HomeScreen() {
   return (
     <Container centered={false}>
       <ScrollView contentContainerStyle={{ padding: layout.spacing * 2 }}>
-        {routes.map((route, index) => (
+        {routes.map((route) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate('CircleGesturesLesson')}
-            key={route.name + index}
+            onPress={() => navigation.navigate(route.name)}
+            key={route.name}
             style={styles.button}
           >
             <Text style={styles.title}>{route.title}</Text>

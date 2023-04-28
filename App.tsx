@@ -1,3 +1,5 @@
+import './src/lib/polyfills'
+
 import { NavigationContainer } from '@react-navigation/native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 

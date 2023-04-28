@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
+import BaloonSliderLesson from '../lessons/BaloonSlider/BaloonSlider'
 import CircleGesturesLesson from '../lessons/CircleGestures/CircleGestures'
 import { HomeScreen } from './Home'
 import type { Routes } from './Routes'
@@ -32,6 +33,7 @@ export function MainNavigator() {
         name="CircleGesturesLesson"
         component={CircleGesturesLesson}
       />
+      <Stack.Screen name="BaloonSliderLesson" component={BaloonSliderLesson} />
     </Stack.Navigator>
   )
 }
