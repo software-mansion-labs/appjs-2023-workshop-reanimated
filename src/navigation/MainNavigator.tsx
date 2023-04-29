@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import BaloonSliderLesson from '../lessons/BaloonSlider/BaloonSlider'
 import CircleGesturesLesson from '../lessons/CircleGestures/CircleGestures'
+import DynamicTabsLesson from '../lessons/DynamicTabs/DynamicTabs'
+import ScrollAnimationLesson from '../lessons/ScrollAnimation/ScrollAnimation'
 import { HomeScreen } from './Home'
 import type { Routes } from './Routes'
 
@@ -34,6 +36,11 @@ export function MainNavigator() {
         component={CircleGesturesLesson}
       />
       <Stack.Screen name="BaloonSliderLesson" component={BaloonSliderLesson} />
+      <Stack.Screen
+        name="ScrollAnimationLesson"
+        component={ScrollAnimationLesson}
+      />
+      <Stack.Screen name="DynamicTabsLesson" component={DynamicTabsLesson} />
     </Stack.Navigator>
   )
 }

@@ -1,6 +1,8 @@
 type LessonRoutes = {
   CircleGesturesLesson: undefined
   BaloonSliderLesson: undefined
+  ScrollAnimationLesson: undefined
+  DynamicTabsLesson: undefined
 }
 type RouteMeta = {
   name: keyof LessonRoutes
@@ -18,6 +20,16 @@ export const routes: RouteMeta[] = [
     name: 'BaloonSliderLesson',
     title: 'Baloon Slider 👉',
     subtitle: 'Lesson 2',
+  },
+  {
+    name: 'ScrollAnimationLesson',
+    title: 'Scroll Animation 👉',
+    subtitle: 'Lesson 3',
+  },
+  {
+    name: 'DynamicTabsLesson',
+    title: 'Dynamic Tabs 👉',
+    subtitle: 'Lesson 4',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }
