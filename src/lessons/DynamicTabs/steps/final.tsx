@@ -60,7 +60,7 @@ const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
 
   return (
     <View
-      style={{ marginHorizontal: 10, paddingVertical: 10 }}
+      style={{ marginHorizontal: 4, paddingVertical: 10 }}
       ref={tabRef}
       onLayout={() => {
         // This is needed because we can't send the initial render measurements
@@ -70,7 +70,11 @@ const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
         }
       }}
     >
-      <TouchableOpacity onPress={sendMeasurements} hitSlop={hitSlop}>
+      <TouchableOpacity
+        onPress={sendMeasurements}
+        hitSlop={hitSlop}
+        style={{ marginHorizontal: 8 }}
+      >
         <Text>{name}</Text>
       </TouchableOpacity>
     </View>
