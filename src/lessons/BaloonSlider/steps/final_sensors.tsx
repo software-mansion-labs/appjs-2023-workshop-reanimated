@@ -1,3 +1,7 @@
+import { AnimatedText } from '@components/AnimatedText'
+import { Container } from '@components/Container'
+import { clamp } from '@lib/reanimated'
+import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -12,10 +16,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
-
-import { AnimatedText } from '../../../components/AnimatedText'
-import { clamp } from '../../../lib/reanimated'
-import { colorShades, layout } from '../../../lib/theme'
 
 const minAngleToActivateSensor = 5 //in degrees
 const pointsPerAngle = 0.2
@@ -52,6 +52,7 @@ export function BaloonSliderStepFinalSensors() {
   })
 
   const tapGesture = Gesture.Tap()
+    .maxDuration(100000)
     .onBegin(() => {
       isSensorActive.value = false
       scale.value = withSpring(2)
@@ -130,27 +131,29 @@ export function BaloonSliderStepFinalSensors() {
   })
 
   return (
-    <GestureDetector gesture={gestures}>
-      <View ref={aRef} style={styles.slider}>
-        <Animated.View style={[styles.balloon, balloonStyle]}>
-          <View style={styles.textContainer}>
-            <AnimatedText
-              text={progress}
-              style={{ color: 'white', fontWeight: '600' }}
-            />
-          </View>
-        </Animated.View>
-        <Animated.View
-          style={{
-            height: 5,
-            width: x,
-            backgroundColor: colorShades.purple.dark,
-            position: 'absolute',
-          }}
-        />
-        <Animated.View style={[styles.knob, animatedStyle]} />
-      </View>
-    </GestureDetector>
+    <Container>
+      <GestureDetector gesture={gestures}>
+        <View ref={aRef} style={styles.slider}>
+          <Animated.View style={[styles.balloon, balloonStyle]}>
+            <View style={styles.textContainer}>
+              <AnimatedText
+                text={progress}
+                style={{ color: 'white', fontWeight: '600' }}
+              />
+            </View>
+          </Animated.View>
+          <Animated.View
+            style={{
+              height: 5,
+              width: x,
+              backgroundColor: colorShades.purple.dark,
+              position: 'absolute',
+            }}
+          />
+          <Animated.View style={[styles.knob, animatedStyle]} />
+        </View>
+      </GestureDetector>
+    </Container>
   )
 }
 

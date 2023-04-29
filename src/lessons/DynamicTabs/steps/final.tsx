@@ -1,4 +1,7 @@
 /* global _WORKLET */
+import { tabsList } from '@lib/mock'
+import { hitSlop } from '@lib/reanimated'
+import { colorShades } from '@lib/theme'
 import { memo, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
@@ -14,29 +17,17 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated'
-
-import { tabsList } from '../../../lib/mock'
-import { hitSlop } from '../../../lib/reanimated'
-import { colorShades } from '../../../lib/theme'
-
-type MeasureDimensions = {
-  x: number
-  y: number
-  width: number
-  height: number
-  pageX: number
-  pageY: number
-}
+import type { MeasuredDimensions } from 'react-native-reanimated/src/reanimated2/commonTypes'
 
 type TabsProps = {
   name: string
-  onPress: (measurements: MeasureDimensions) => void
+  onPress: (measurements: MeasuredDimensions) => void
   isActiveTabIndex: boolean
 }
 
 type TabWithMeasurements = {
   index: number
-  measuremenets: MeasureDimensions
+  measuremenets: MeasuredDimensions
 }
 
 const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
@@ -120,7 +111,11 @@ export function DynamicTabsFinal({
         return
       }
       const dimensions = selectedTab.measuremenets
-      const scrollViewDimensions: MeasureDimensions = measure(scrollViewRef)
+      const scrollViewDimensions: MeasuredDimensions = measure(scrollViewRef)
+
+      if (!scrollViewDimensions) {
+        return
+      }
 
       scrollTo(
         scrollViewRef,
@@ -138,29 +133,27 @@ export function DynamicTabsFinal({
   )
 
   return (
-    <View>
-      <ScrollView
-        horizontal
-        style={{ flexGrow: 0 }}
-        contentContainerStyle={{ paddingVertical: 20 }}
-        ref={scrollViewRef}
-      >
-        {tabsList.map((tab, index) => (
-          <Tab
-            key={`tab-${tab}-${index}`}
-            name={tab}
-            isActiveTabIndex={index === selectedTabIndex}
-            onPress={(measuremenets) => {
-              tabWithMeasurements.value = {
-                index,
-                measuremenets,
-              }
-            }}
-          />
-        ))}
-        <Indicator selectedTab={tabWithMeasurements} />
-      </ScrollView>
-    </View>
+    <ScrollView
+      horizontal
+      style={{ flexGrow: 0 }}
+      contentContainerStyle={{ paddingVertical: 20 }}
+      ref={scrollViewRef}
+    >
+      {tabsList.map((tab, index) => (
+        <Tab
+          key={`tab-${tab}-${index}`}
+          name={tab}
+          isActiveTabIndex={index === selectedTabIndex}
+          onPress={(measuremenets) => {
+            tabWithMeasurements.value = {
+              index,
+              measuremenets,
+            }
+          }}
+        />
+      ))}
+      <Indicator selectedTab={tabWithMeasurements} />
+    </ScrollView>
   )
 }
 

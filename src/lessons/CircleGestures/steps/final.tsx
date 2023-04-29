@@ -1,3 +1,5 @@
+import { Container } from '@components/Container'
+import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -8,13 +10,12 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-import { colorShades, layout } from '../../../lib/theme'
-
 export function CircleGesturesStepFinal() {
   const scale = useSharedValue(1)
   const x = useSharedValue(0)
 
   const tapGesture = Gesture.Tap()
+    .maxDuration(100000)
     .onBegin(() => {
       scale.value = withSpring(2)
     })
@@ -51,11 +52,13 @@ export function CircleGesturesStepFinal() {
     }
   })
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <GestureDetector gesture={gestures}>
-        <Animated.View style={[styles.knob, animatedStyle]} />
-      </GestureDetector>
-    </View>
+    <Container>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <GestureDetector gesture={gestures}>
+          <Animated.View style={[styles.knob, animatedStyle]} />
+        </GestureDetector>
+      </View>
+    </Container>
   )
 }
 
