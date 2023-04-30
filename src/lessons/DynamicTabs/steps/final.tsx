@@ -1,4 +1,5 @@
 /* global _WORKLET */
+import { Container } from '@components/Container'
 import { tabsList } from '@lib/mock'
 import { hitSlop } from '@lib/reanimated'
 import { colorShades } from '@lib/theme'
@@ -85,14 +86,14 @@ function Indicator({
 
     return {
       left: withTiming(dimensions.x),
-      top: withTiming(dimensions.y + dimensions.height),
+      bottom: 0,
       width: withTiming(dimensions.width),
     }
   })
 
   return <Animated.View style={[styles.indicator, stylez]} />
 }
-export function DynamicTabsFinal({
+export function DynamicTabsLesson({
   selectedTabIndex = 0,
   onChangeTab,
 }: {
@@ -133,27 +134,29 @@ export function DynamicTabsFinal({
   )
 
   return (
-    <ScrollView
-      horizontal
-      style={{ flexGrow: 0 }}
-      contentContainerStyle={{ paddingVertical: 20 }}
-      ref={scrollViewRef}
-    >
-      {tabsList.map((tab, index) => (
-        <Tab
-          key={`tab-${tab}-${index}`}
-          name={tab}
-          isActiveTabIndex={index === selectedTabIndex}
-          onPress={(measuremenets) => {
-            tabWithMeasurements.value = {
-              index,
-              measuremenets,
-            }
-          }}
-        />
-      ))}
-      <Indicator selectedTab={tabWithMeasurements} />
-    </ScrollView>
+    <Container>
+      <ScrollView
+        horizontal
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={{ paddingVertical: 10 }}
+        ref={scrollViewRef}
+      >
+        {tabsList.map((tab, index) => (
+          <Tab
+            key={`tab-${tab}-${index}`}
+            name={tab}
+            isActiveTabIndex={index === selectedTabIndex}
+            onPress={(measuremenets) => {
+              tabWithMeasurements.value = {
+                index,
+                measuremenets,
+              }
+            }}
+          />
+        ))}
+        <Indicator selectedTab={tabWithMeasurements} />
+      </ScrollView>
+    </Container>
   )
 }
 

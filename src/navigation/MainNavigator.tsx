@@ -38,12 +38,12 @@ export function MainNavigator() {
         component={CircleGesturesLesson}
       />
       <Stack.Screen name="BaloonSliderLesson" component={BaloonSliderLesson} />
+      <Stack.Screen name="MarqueeLesson" component={MarqueeLesson} />
+      <Stack.Screen name="DynamicTabsLesson" component={DynamicTabsLesson} />
       <Stack.Screen
         name="ScrollAnimationLesson"
         component={ScrollAnimationLesson}
       />
-      <Stack.Screen name="DynamicTabsLesson" component={DynamicTabsLesson} />
-      <Stack.Screen name="MarqueeLesson" component={MarqueeLesson} />
     </Stack.Navigator>
   )
 }

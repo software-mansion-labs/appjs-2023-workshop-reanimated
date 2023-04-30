@@ -1,9 +1,9 @@
 type LessonRoutes = {
   CircleGesturesLesson: undefined
   BaloonSliderLesson: undefined
-  ScrollAnimationLesson: undefined
   DynamicTabsLesson: undefined
   MarqueeLesson: undefined
+  ScrollAnimationLesson: undefined
 }
 type RouteMeta = {
   name: keyof LessonRoutes
@@ -23,8 +23,8 @@ export const routes: RouteMeta[] = [
     subtitle: 'Lesson 2',
   },
   {
-    name: 'ScrollAnimationLesson',
-    title: 'Scroll Animation 👉',
+    name: 'MarqueeLesson',
+    title: 'Marquee 👉',
     subtitle: 'Lesson 3',
   },
   {
@@ -33,9 +33,9 @@ export const routes: RouteMeta[] = [
     subtitle: 'Lesson 4',
   },
   {
-    name: 'MarqueeLesson',
-    title: 'Marquee 👉',
-    subtitle: 'Lesson 5',
+    name: 'ScrollAnimationLesson',
+    title: 'Scroll Animation 👉',
+    subtitle: 'Lesson 5 (bonus)',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }
