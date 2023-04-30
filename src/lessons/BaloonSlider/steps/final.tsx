@@ -1,6 +1,6 @@
 import { AnimatedText } from '@components/AnimatedText'
 import { Container } from '@components/Container'
-import { clamp } from '@lib/reanimated'
+import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -15,7 +15,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-export function BaloonSliderStepFinal() {
+export function BaloonSliderLesson() {
   const scale = useSharedValue(1)
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
@@ -101,7 +101,7 @@ export function BaloonSliderStepFinal() {
   return (
     <Container>
       <GestureDetector gesture={gestures}>
-        <View ref={aRef} style={styles.slider}>
+        <View ref={aRef} style={styles.slider} hitSlop={hitSlop}>
           <Animated.View style={[styles.balloon, balloonStyle]}>
             <View style={styles.textContainer}>
               <AnimatedText
@@ -110,14 +110,7 @@ export function BaloonSliderStepFinal() {
               />
             </View>
           </Animated.View>
-          <Animated.View
-            style={{
-              height: 5,
-              width: x,
-              backgroundColor: colorShades.purple.dark,
-              position: 'absolute',
-            }}
-          />
+          <Animated.View style={[styles.progress, { width: x }]} />
           <Animated.View style={[styles.knob, animatedStyle]} />
         </View>
       </GestureDetector>
@@ -163,6 +156,11 @@ const styles = StyleSheet.create({
     bottom: -layout.knobSize / 2,
     borderRadius: 2,
     backgroundColor: colorShades.purple.base,
+    position: 'absolute',
+  },
+  progress: {
+    height: 5,
+    backgroundColor: colorShades.purple.dark,
     position: 'absolute',
   },
 })

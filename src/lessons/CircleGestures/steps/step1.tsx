@@ -24,16 +24,6 @@ export function CircleGesturesLesson() {
       scale.value = withSpring(1)
     })
 
-  const panGesture = Gesture.Pan()
-    .averageTouches(true)
-    .onChange((ev) => {
-      x.value += ev.changeX
-    })
-    .onEnd(() => {
-      x.value = withSpring(0)
-      scale.value = withSpring(1)
-    })
-  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
@@ -55,7 +45,7 @@ export function CircleGesturesLesson() {
   return (
     <Container>
       <View style={{ flex: 1, justifyContent: 'center' }}>
-        <GestureDetector gesture={gestures}>
+        <GestureDetector gesture={tapGesture}>
           <Animated.View
             style={[styles.knob, animatedStyle]}
             hitSlop={hitSlop}

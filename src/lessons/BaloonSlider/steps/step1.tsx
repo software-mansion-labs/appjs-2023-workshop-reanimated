@@ -1,81 +1,39 @@
-import { AnimatedText } from '@components/AnimatedText'
 import { Container } from '@components/Container'
-import { clamp, hitSlop } from '@lib/reanimated'
+import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
   interpolate,
-  measure,
-  SensorType,
   useAnimatedRef,
-  useAnimatedSensor,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
 
-const minAngleToActivateSensor = 5 //in degrees
-const pointsPerAngle = 0.2
-
 export function BaloonSliderLesson() {
   const scale = useSharedValue(1)
   const x = useSharedValue(0)
-  const progress = useSharedValue(0)
-  const balloonScale = useSharedValue(0)
-  const isSensorActive = useSharedValue(true)
-  const { sensor } = useAnimatedSensor(SensorType.ROTATION, {
-    interval: 100,
-  })
-  const aRef = useAnimatedRef<View>()
-
-  useDerivedValue(() => {
-    if (!isSensorActive.value || !aRef) {
-      return
-    }
-    // Angle is max ~90deg
-    const angle = sensor.value.roll * (180 / Math.PI)
-    if (Math.abs(angle) < minAngleToActivateSensor) {
-      scale.value = withSpring(1)
-      balloonScale.value = withSpring(0)
-      return
-    }
-    const size = measure(aRef)
-    const countValue = angle * pointsPerAngle
-
-    x.value = clamp((x.value += countValue), 0, size.width)
-    progress.value = 100 * (x.value / size.width)
-    scale.value = withSpring(2)
-    balloonScale.value = withSpring(1)
-  })
 
   const tapGesture = Gesture.Tap()
     .maxDuration(100000)
     .onBegin(() => {
-      isSensorActive.value = false
       scale.value = withSpring(2)
-      balloonScale.value = withSpring(1)
     })
     .onEnd(() => {
-      isSensorActive.value = true
       scale.value = withSpring(1)
-      balloonScale.value = withSpring(0)
     })
+
+  const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
     .onChange((ev) => {
-      isSensorActive.value = false
-      const size = measure(aRef)
-      x.value = clamp((x.value += ev.changeX), 0, size.width)
-      progress.value = 100 * (x.value / size.width)
+      x.value += ev.changeX
     })
     .onEnd(() => {
-      isSensorActive.value = true
       scale.value = withSpring(1)
-      balloonScale.value = withSpring(0)
     })
   const gestures = Gesture.Simultaneous(tapGesture, panGesture)
   const animatedStyle = useAnimatedStyle(() => {
@@ -97,51 +55,10 @@ export function BaloonSliderLesson() {
     }
   })
 
-  const balloonSpringyX = useDerivedValue(() => {
-    return withSpring(x.value)
-  })
-
-  const balloonAngle = useDerivedValue(() => {
-    return (
-      90 +
-      (Math.atan2(-layout.indicatorSize * 2, balloonSpringyX.value - x.value) *
-        180) /
-        Math.PI
-    )
-  })
-
-  const balloonStyle = useAnimatedStyle(() => {
-    return {
-      opacity: balloonScale.value,
-      transform: [
-        { translateX: balloonSpringyX.value },
-        { scale: balloonScale.value },
-        {
-          translateY: interpolate(
-            balloonScale.value,
-            [0, 1],
-            [0, -layout.indicatorSize],
-          ),
-        },
-        {
-          rotate: `${balloonAngle.value}deg`,
-        },
-      ],
-    }
-  })
-
   return (
     <Container>
       <GestureDetector gesture={gestures}>
         <View ref={aRef} style={styles.slider} hitSlop={hitSlop}>
-          <Animated.View style={[styles.balloon, balloonStyle]}>
-            <View style={styles.textContainer}>
-              <AnimatedText
-                text={progress}
-                style={{ color: 'white', fontWeight: '600' }}
-              />
-            </View>
-          </Animated.View>
           <Animated.View style={[styles.progress, { width: x }]} />
           <Animated.View style={[styles.knob, animatedStyle]} />
         </View>

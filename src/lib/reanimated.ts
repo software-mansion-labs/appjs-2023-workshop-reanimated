@@ -21,17 +21,14 @@ export const range = (
   return lerp(x2, y2, invlerp(x1, y1, a))
 }
 
-export const hitSlop = {
-  left: 50,
-  bottom: 50,
-  right: 50,
-  top: 50,
+export const radToDeg = (rad: number) => {
+  'worklet'
+  return (rad * 180) / Math.PI
 }
 
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-export async function sleep(ms = 1000, value = true) {
-  await timeout(ms)
-  return value
+export const hitSlop = {
+  left: 25,
+  bottom: 25,
+  right: 25,
+  top: 25,
 }
