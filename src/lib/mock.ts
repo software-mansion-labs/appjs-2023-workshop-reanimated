@@ -27,10 +27,15 @@ export const contacts = [...Array(alphabet.length).keys()].map(
       index: sectionIndex,
       key: `list-${letter}`,
       y: makeMutable(0),
-      data: [...Array(Math.floor(Math.random() * 40) + 5).keys()].map((i) => ({
+      data: [...Array(Math.floor(Math.random() * 5) + 5).keys()].map((i) => ({
         name: `${letter}-Contact ${i + 1}`,
         avatar: randomAvatar(),
       })),
     }
   },
 )
+
+export const friends = [
+  'https://pbs.twimg.com/profile_images/1276570366555684865/7J55FrYi_400x400.jpg',
+  'https://pbs.twimg.com/profile_images/1064786289311010816/zD2FlyxR_400x400.jpg',
+]

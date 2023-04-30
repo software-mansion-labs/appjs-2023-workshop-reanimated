@@ -1,12 +1,14 @@
 import { CircleGesturesLesson } from '@lessons/CircleGestures'
+import { MarqueeLesson } from '@lessons/Marquee'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
+
+import { HomeScreen } from './Home'
+import type { Routes } from './Routes'
 import { BaloonSliderLesson } from '../lessons/BaloonSlider/BaloonSlider'
 import { DynamicTabsLesson } from '../lessons/DynamicTabs/DynamicTabs'
 import { ScrollAnimationLesson } from '../lessons/ScrollAnimation/ScrollAnimation'
-import { HomeScreen } from './Home'
-import type { Routes } from './Routes'
 
 const Stack = createNativeStackNavigator<Routes>()
 
@@ -41,6 +43,7 @@ export function MainNavigator() {
         component={ScrollAnimationLesson}
       />
       <Stack.Screen name="DynamicTabsLesson" component={DynamicTabsLesson} />
+      <Stack.Screen name="MarqueeLesson" component={MarqueeLesson} />
     </Stack.Navigator>
   )
 }

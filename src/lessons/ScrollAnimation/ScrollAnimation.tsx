@@ -76,7 +76,6 @@ const AlphabetLetter = ({
       >
         {alphabet.charAt(index).toUpperCase()}
       </Animated.Text>
-      {/* <Animated.View style={[styles.balloon]} /> */}
     </Animated.View>
   )
 }
