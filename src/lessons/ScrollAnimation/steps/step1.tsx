@@ -8,47 +8,19 @@ import Animated, {
   Extrapolate,
   interpolate,
   measure,
-  scrollTo,
-  SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated'
 
 type AlphabetLetterProps = {
   index: number
   letter: string
-  scrollableIndex: SharedValue<number>
 }
 
-const AlphabetLetter = ({
-  index,
-  letter,
-  scrollableIndex,
-}: AlphabetLetterProps) => {
+const AlphabetLetter = ({ index, letter }: AlphabetLetterProps) => {
   const posY = useSharedValue(0)
-  const styles = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(
-        scrollableIndex.value,
-        [index - 1, index, index + 1],
-        [0.5, 1, 0.5],
-        Extrapolate.CLAMP,
-      ),
-      transform: [
-        {
-          scale: interpolate(
-            scrollableIndex.value,
-            [index - 1.5, index, index + 1.5],
-            [1, 1.5, 1],
-            Extrapolate.CLAMP,
-          ),
-        },
-      ],
-    }
-  })
   return (
     <Animated.View
       style={[
@@ -58,7 +30,6 @@ const AlphabetLetter = ({
           justifyContent: 'center',
           flexDirection: 'row',
         },
-        styles,
       ]}
       onLayout={(e) => {
         posY.value = e.nativeEvent.layout.y
@@ -85,9 +56,6 @@ export function ScrollAnimationLesson() {
   const scale = useSharedValue(1)
   const y = useSharedValue(0)
   const alphabetRef = useAnimatedRef<View>()
-  const scrollViewRef = useAnimatedRef<ScrollView>()
-  const activeIndex = useSharedValue(0)
-  const scrollableIndex = useSharedValue(0)
 
   const tapGesture = Gesture.Tap()
     .maxDuration(100000)
@@ -107,25 +75,9 @@ export function ScrollAnimationLesson() {
       }
       y.value = clamp(
         (y.value += ev.changeY),
-        alphabetLayout.y, // take into account the knob size
-        alphabetLayout.height - layout.knobSize,
+        0 - layout.knobSize / 2, // take into account the knob size
+        alphabetLayout.height - layout.knobSize / 2,
       )
-      // This is snapTo by the same interval. This will snap to the nearest
-      // letter based on the knob position.
-      const snapBy =
-        (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
-      const snapToIndex = Math.floor(y.value / snapBy)
-
-      scrollableIndex.value = y.value / snapBy
-      if (snapToIndex === activeIndex.value) {
-        return
-      }
-
-      // This is to avoid triggering scrolling to the same index.
-      activeIndex.value = snapToIndex
-      if (contacts[snapToIndex]) {
-        scrollTo(scrollViewRef, 0, contacts[snapToIndex]!.y.value, true)
-      }
     })
     .onEnd(() => {
       const alphabetLayout = measure(alphabetRef)
@@ -134,12 +86,9 @@ export function ScrollAnimationLesson() {
       }
       // This is snapTo by the same interval. This will snap to the nearest
       // letter based on the knob position.
-      const snapBy =
-        (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
-      const snapToIndex = Math.floor(y.value / snapBy)
-      const snapTo = snapToIndex * snapBy
-      y.value = withSpring(snapTo)
-      scrollableIndex.value = withTiming(snapToIndex)
+      const snapBy = alphabetLayout.height / (alphabet.length - 1)
+      const snapTo = Math.round(y.value / snapBy) * snapBy
+      y.value = withSpring(snapTo + layout.knobSize / 2)
       scale.value = withSpring(1)
     })
 
@@ -162,30 +111,22 @@ export function ScrollAnimationLesson() {
       ],
     }
   })
-
   return (
     <Container centered={false}>
       <View style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 40 }}
-          ref={scrollViewRef}
-        >
-          {contacts.map(({ index, title, data, y }) => {
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 40 }}>
+          {contacts.map(({ index, section, data }) => {
             return (
-              <View
-                key={`${title}-${index}`}
-                onLayout={(ev) => {
-                  y.value = ev.nativeEvent.layout.y
-                }}
-              >
+              <Animated.View key={`${section}-${index}`}>
                 <Text
+                  onLayout={(e) => {}}
                   style={{
                     fontSize: 42,
                     marginVertical: 10,
                     fontWeight: '900',
                   }}
                 >
-                  {title}
+                  {section}
                 </Text>
                 {data.map((item, index) => {
                   return (
@@ -210,7 +151,7 @@ export function ScrollAnimationLesson() {
                     </View>
                   )
                 })}
-              </View>
+              </Animated.View>
             )
           })}
         </ScrollView>
@@ -233,19 +174,14 @@ export function ScrollAnimationLesson() {
               transform: [{ translateX: -layout.indicatorSize / 4 }],
               flex: 1,
               width: 20,
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
             }}
             pointerEvents="box-none"
             ref={alphabetRef}
           >
             {[...Array(alphabet.length).keys()].map((i) => {
               return (
-                <AlphabetLetter
-                  key={i}
-                  letter={alphabet.charAt(i)}
-                  index={i}
-                  scrollableIndex={scrollableIndex}
-                />
+                <AlphabetLetter key={i} letter={alphabet.charAt(i)} index={i} />
               )
             })}
           </View>

@@ -3,6 +3,7 @@ export const layout = {
   radius: 8,
   knobSize: 24,
   indicatorSize: 48,
+  avatarSize: 36,
 }
 
 export const colors = {
