@@ -1,9 +1,8 @@
-/* global _WORKLET */
 import { Container } from '@components/Container'
 import { tabsList } from '@lib/mock'
 import { hitSlop } from '@lib/reanimated'
 import { colorShades } from '@lib/theme'
-import { memo, useEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import {
   FlatList,
@@ -16,7 +15,6 @@ import Animated, {
   runOnUI,
   scrollTo,
   SharedValue,
-  useAnimatedReaction,
   useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
@@ -26,78 +24,56 @@ import type { MeasuredDimensions } from 'react-native-reanimated/src/reanimated2
 
 type TabsProps = {
   name: string
-  onPress: (measurements: MeasuredDimensions) => void
+  onPress: () => void
   isActiveTabIndex: boolean
 }
 
-type TabWithMeasurements = {
-  index: number
-  measuremenets: MeasuredDimensions
-}
-
-const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
-  const tabRef = useAnimatedRef<View>()
-  const sendMeasurements = () => {
-    runOnUI(() => {
-      'worklet'
-      const measurements = measure(tabRef)
-      runOnJS(onPress)(measurements)
-    })()
-  }
-
-  useEffect(() => {
-    // Send measurements when the active tab changes. This callback is necessary
-    // because we need the tab measurements in order to animate the indicator
-    // and the position of the scroll
-    if (isActiveTabIndex) {
-      sendMeasurements()
-    }
-  }, [isActiveTabIndex])
-
-  return (
-    <View
-      style={{ marginHorizontal: 4, paddingVertical: 10 }}
-      ref={tabRef}
-      onLayout={() => {
-        // This is needed because we can't send the initial render measurements
-        // without hooking into `onLayout`.
-        if (isActiveTabIndex) {
-          sendMeasurements()
-        }
-      }}
-    >
-      <TouchableOpacity
-        onPress={sendMeasurements}
-        hitSlop={hitSlop}
-        style={{ marginHorizontal: 8 }}
+const Tab = forwardRef<View, TabsProps>(
+  ({ isActiveTabIndex, name, onPress }, ref) => {
+    return (
+      <View
+        style={{ marginHorizontal: 4, paddingVertical: 10 }}
+        ref={ref}
+        onLayout={() => {
+          // This is needed because we can't send the initial render measurements
+          // without hooking into `onLayout`.
+          if (isActiveTabIndex) {
+            onPress()
+          }
+        }}
       >
-        <Text>{name}</Text>
-      </TouchableOpacity>
-    </View>
-  )
-})
+        <TouchableOpacity
+          onPress={onPress}
+          hitSlop={hitSlop}
+          style={{ marginHorizontal: 8 }}
+        >
+          <Text>{name}</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  },
+)
 
 function Indicator({
-  selectedTab,
+  tabMeasurements,
 }: {
-  selectedTab: SharedValue<TabWithMeasurements | null>
+  tabMeasurements: SharedValue<MeasuredDimensions | null>
 }) {
   const stylez = useAnimatedStyle(() => {
-    if (!selectedTab?.value) {
+    if (!tabMeasurements?.value) {
       return {}
     }
-    const dimensions = selectedTab.value.measuremenets
 
     return {
-      left: withTiming(dimensions.x),
+      left: withTiming(tabMeasurements.value.x),
       bottom: 0,
-      width: withTiming(dimensions.width),
+      width: withTiming(tabMeasurements.value.width),
     }
   })
 
   return <Animated.View style={[styles.indicator, stylez]} />
 }
-export function DynamicTab({
+export function DynamicTabs({
   selectedTabIndex = 0,
   onChangeTab,
 }: {
@@ -105,37 +81,47 @@ export function DynamicTab({
   onChangeTab?: (index: number) => void
 }) {
   const scrollViewRef = useAnimatedRef<ScrollView>()
-  const tabWithMeasurements = useSharedValue<TabWithMeasurements | null>(null)
+  const tabMeasurements = useSharedValue<MeasuredDimensions | null>(null)
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const tabRefs = tabsList.map(() => useAnimatedRef<View>())
 
-  useAnimatedReaction(
-    () => {
-      return tabWithMeasurements.value
+  const changeSelectedTab = useCallback(
+    (index: number) => {
+      runOnUI(() => {
+        'worklet'
+        if (!tabRefs[index] || !scrollViewRef) {
+          return
+        }
+
+        const measurements = measure(tabRefs[index]!)
+        const scrollViewDimensions: MeasuredDimensions = measure(scrollViewRef)
+
+        if (!scrollViewDimensions || !measurements) {
+          return
+        }
+
+        scrollTo(
+          scrollViewRef,
+          measurements.x -
+            (scrollViewDimensions.width - measurements.width) / 2,
+          0,
+          true,
+        )
+        tabMeasurements.value = measurements
+        // Here, you can send the selected tab index to the parent via a
+        // callback
+        if (onChangeTab) {
+          runOnJS(onChangeTab)(index)
+        }
+      })()
     },
-    (selectedTab, prevSelectedTab) => {
-      if (!selectedTab || !scrollViewRef) {
-        return
-      }
-      const dimensions = selectedTab.measuremenets
-      const scrollViewDimensions: MeasuredDimensions = measure(scrollViewRef)
-
-      if (!scrollViewDimensions) {
-        return
-      }
-
-      scrollTo(
-        scrollViewRef,
-        dimensions.x - (scrollViewDimensions.width - dimensions.width) / 2,
-        0,
-        // We don't want to animate the initial position of the scroll.
-        prevSelectedTab !== null,
-      )
-      // Here, you can send the selected tab index to the parent via a callback
-      if (onChangeTab && selectedTab.index !== prevSelectedTab?.index) {
-        runOnJS(onChangeTab)(selectedTab.index)
-      }
-    },
-    [selectedTabIndex],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onChangeTab, selectedTabIndex],
   )
+  useEffect(() => {
+    changeSelectedTab(selectedTabIndex)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTabIndex])
 
   return (
     <ScrollView
@@ -148,16 +134,14 @@ export function DynamicTab({
         <Tab
           key={`tab-${tab}-${index}`}
           name={tab}
+          ref={tabRefs[index]}
           isActiveTabIndex={index === selectedTabIndex}
-          onPress={(measuremenets) => {
-            tabWithMeasurements.value = {
-              index,
-              measuremenets,
-            }
+          onPress={() => {
+            changeSelectedTab(index)
           }}
         />
       ))}
-      <Indicator selectedTab={tabWithMeasurements} />
+      <Indicator tabMeasurements={tabMeasurements} />
     </ScrollView>
   )
 }
@@ -177,7 +161,7 @@ export function DynamicTabsLesson() {
   const ref = useRef<FlatList>(null)
   return (
     <Container>
-      <DynamicTab
+      <DynamicTabs
         selectedTabIndex={selectedTabIndex}
         onChangeTab={(index) => {
           console.log('OnChangeTab Index: ', index)
