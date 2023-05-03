@@ -1,5 +1,6 @@
 import { CircleGesturesLesson } from '@lessons/CircleGestures'
 import { MarqueeLesson } from '@lessons/Marquee'
+import { SharedElementTransitionDnd } from '@lessons/SharedElementTransitionDnd'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
@@ -43,6 +44,10 @@ export function MainNavigator() {
       <Stack.Screen
         name="ScrollAnimationLesson"
         component={ScrollAnimationLesson}
+      />
+      <Stack.Screen
+        name="SharedElementTransitionDnd"
+        component={SharedElementTransitionDnd}
       />
     </Stack.Navigator>
   )

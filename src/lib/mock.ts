@@ -39,3 +39,18 @@ export const friends = [
   'https://pbs.twimg.com/profile_images/1276570366555684865/7J55FrYi_400x400.jpg',
   'https://pbs.twimg.com/profile_images/1064786289311010816/zD2FlyxR_400x400.jpg',
 ]
+
+export type Post = {
+  id: number
+  thumbnailUri: string
+  originalUri: string
+}
+
+export const images: Post[] = [...Array(30).keys()].map((index) => {
+  const _baseUri = `https://picsum.photos/id/${index + 10}`
+  return {
+    id: index + 1,
+    thumbnailUri: `${_baseUri}/200/200?grayscale`,
+    originalUri: `${_baseUri}/500/500`,
+  }
+})

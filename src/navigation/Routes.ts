@@ -1,14 +1,24 @@
+import type { Post } from '@lib/mock'
+
 type LessonRoutes = {
   CircleGesturesLesson: undefined
   BaloonSliderLesson: undefined
   DynamicTabsLesson: undefined
   MarqueeLesson: undefined
   ScrollAnimationLesson: undefined
+  SharedElementTransitionDnd: undefined
 }
 type RouteMeta = {
   name: keyof LessonRoutes
   title: string
   subtitle: string
+}
+
+export type SharedElementTransitionDndRoutes = {
+  SharedElementTransitionDndHome: undefined
+  SharedElementTransitionDndHomeDetail: {
+    item: Post
+  }
 }
 
 export const routes: RouteMeta[] = [
@@ -36,6 +46,11 @@ export const routes: RouteMeta[] = [
     name: 'ScrollAnimationLesson',
     title: 'Scroll Animation 👉',
     subtitle: 'Lesson 5 (bonus)',
+  },
+  {
+    name: 'SharedElementTransitionDnd',
+    title: 'SET dnd 👉',
+    subtitle: 'Lesson 6 [test]',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }

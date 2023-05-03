@@ -4,6 +4,7 @@ export const layout = {
   knobSize: 24,
   indicatorSize: 48,
   avatarSize: 36,
+  imageHeight: 260,
 }
 
 export const colors = {
