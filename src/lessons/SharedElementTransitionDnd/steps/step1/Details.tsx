@@ -7,7 +7,7 @@ import {
   useRoute,
 } from '@react-navigation/native'
 import React from 'react'
-import { Button, Dimensions, Image, StyleSheet, View } from 'react-native'
+import { Button, Dimensions, StyleSheet, View } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
 
 const { width, height } = Dimensions.get('screen')
@@ -38,7 +38,11 @@ export function SharedElementTransitionDndDetail() {
         style={[styles.backdrop]}
       />
       <View style={[styles.content]}>
-        <Image source={{ uri: activeItem.originalUri }} style={styles.image} />
+        <Animated.Image
+          source={{ uri: activeItem.originalUri }}
+          style={styles.image}
+          sharedTransitionTag={'image-' + activeItem.id}
+        />
         <Content />
         <Button title="go back" onPress={goBack} />
       </View>

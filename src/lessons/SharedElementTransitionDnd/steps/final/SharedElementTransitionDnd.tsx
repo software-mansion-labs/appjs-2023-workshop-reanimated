@@ -16,6 +16,10 @@ export function SharedElementTransitionDnd() {
       />
       <Stack.Screen
         name="SharedElementTransitionDndDetail"
+        options={{
+          animation: 'fade',
+          presentation: 'transparentModal',
+        }}
         component={SharedElementTransitionDndDetail}
       />
     </Stack.Navigator>

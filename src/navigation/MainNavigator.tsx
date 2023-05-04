@@ -48,6 +48,9 @@ export function MainNavigator() {
       <Stack.Screen
         name="SharedElementTransitionDnd"
         component={SharedElementTransitionDnd}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   )

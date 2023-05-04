@@ -8,15 +8,9 @@ export function Content() {
       entering={FadeInDown.delay(200)}
       exiting={FadeOutDown}
       style={{
-        padding: layout.spacing,
+        padding: layout.spacing * 2,
       }}
     >
-      <Text style={styles.paragraph}>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas quasi
-        et nostrum harum repudiandae dolorem voluptatum assumenda in facere!
-        Cum, officia quas. Velit repellendus aspernatur reprehenderit aut,
-        perspiciatis mollitia nisi!
-      </Text>
       <Text style={styles.paragraph}>
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas quasi
         et nostrum harum repudiandae dolorem voluptatum assumenda in facere!

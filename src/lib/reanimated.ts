@@ -2,6 +2,7 @@ export const lerp = (x: number, y: number, a: number) => {
   'worklet'
   return x * (1 - a) + y * a
 }
+
 export const clamp = (a: number, min = 0, max = 1) => {
   'worklet'
   return Math.min(max, Math.max(min, a))

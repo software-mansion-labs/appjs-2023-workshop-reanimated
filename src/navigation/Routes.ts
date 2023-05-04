@@ -16,7 +16,7 @@ type RouteMeta = {
 
 export type SharedElementTransitionDndRoutes = {
   SharedElementTransitionDndHome: undefined
-  SharedElementTransitionDndHomeDetail: {
+  SharedElementTransitionDndDetail: {
     item: Post
   }
 }

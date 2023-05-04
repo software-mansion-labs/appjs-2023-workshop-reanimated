@@ -13,7 +13,6 @@ import Animated, {
   Extrapolate,
   FadeIn,
   interpolate,
-  runOnJS,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -56,12 +55,8 @@ export function SharedElementTransitionDndDetail() {
       translation.y.value += event.changeY
     })
     .onEnd(() => {
-      if (distance.value > _overdrag) {
-        runOnJS(goBack)()
-      } else {
-        translation.x.value = withSpring(0, { overshootClamping: true })
-        translation.y.value = withSpring(0, { overshootClamping: true })
-      }
+      translation.x.value = withSpring(0, { overshootClamping: true })
+      translation.y.value = withSpring(0, { overshootClamping: true })
     })
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -79,20 +74,11 @@ export function SharedElementTransitionDndDetail() {
     ],
   }))
 
-  const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      distance.value,
-      [0, _overdrag],
-      [1, 0],
-      Extrapolate.CLAMP,
-    ),
-  }))
-
   return (
     <View style={[styles.container]}>
       <Animated.View
         entering={FadeIn.duration(200)}
-        style={[styles.backdrop, backdropStyle]}
+        style={[styles.backdrop]}
       />
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.content, animatedStyle]}>
