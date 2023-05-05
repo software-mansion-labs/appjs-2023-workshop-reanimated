@@ -4,11 +4,23 @@
     "promptToConfigurePushNotifications": false
   },
   "build": {
+    "simulator": {
+      "developmentClient": true,
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_VARIANT": "development",
+        "SIMULATOR": "1"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "simulator": true
       }
     },
     "preview": {

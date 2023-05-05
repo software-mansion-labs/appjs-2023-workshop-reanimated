@@ -8,10 +8,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "eslint . --ext .ts,.tsx  --max-warnings 0",
-    "build:development": "eas build --profile development --platform ios",
+    "build:development": "eas build --profile development --platform all",
     "build:preview": "eas build --profile preview --platform all",
     "build:production": "eas build --profile production --platform all",
-    "build:simulator": "eas build --profile simulator --platform all"
+    "build:simulator": "eas build --profile simulator --platform ios"
   },
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
@@ -27,6 +27,7 @@
     "react-native-reanimated": "^3.1.0",
     "react-native-safe-area-context": "^4.5.1",
     "react-native-screens": "^3.20.0",
+    "react-native-section-list-get-item-layout": "^2.2.3",
     "react-native-web": "~0.18.10"
   },
   "devDependencies": {
