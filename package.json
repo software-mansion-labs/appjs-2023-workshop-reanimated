@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "eslint . --ext .ts,.tsx  --max-warnings 0",
+    "install:simulator": "APP_VARIANT=development eas build:run --platform=ios --latest",
     "build:development": "eas build --profile development --platform all",
     "build:preview": "eas build --profile preview --platform all",
     "build:production": "eas build --profile production --platform all",
