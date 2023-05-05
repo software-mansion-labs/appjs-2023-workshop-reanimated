@@ -6,9 +6,11 @@ import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
+  SensorType,
+  defineAnimation,
   interpolate,
   measure,
-  SensorType,
+  useAnimatedReaction,
   useAnimatedRef,
   useAnimatedSensor,
   useAnimatedStyle,
@@ -17,57 +19,94 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-const minAngleToActivateSensor = 5 //in degrees
-const pointsPerAngle = 0.2
+const GRAVITY = 0.001
+
+function withGravity(userConfig) {
+  'worklet'
+  return defineAnimation(0, () => {
+    'worklet'
+    const config = {
+      acceleration: 0.998,
+      velocity: 0,
+    }
+    Object.assign(config, userConfig)
+    return {
+      onStart: (animation, value, now, previousAnimation) => {
+        animation.current = value
+        animation.lastTimestamp = previousAnimation?.lastTimestamp ?? now
+        animation.velocity = previousAnimation?.velocity ?? config.velocity
+      },
+      onFrame: (animation, now) => {
+        const { lastTimestamp, current, velocity } = animation
+        const { acceleration, clamp } = config
+        const delta = now - lastTimestamp
+        animation.current = current + velocity * delta
+        animation.velocity = velocity + acceleration * delta
+
+        animation.lastTimestamp = now
+        if (clamp) {
+          if (animation.current <= clamp[0]) {
+            animation.current = clamp[0]
+            if (animation.velocity <= 0) {
+              animation.velocity = 0
+              return true
+            }
+          } else if (animation.current >= clamp[1]) {
+            animation.current = clamp[1]
+            if (animation.velocity >= 0) {
+              animation.velocity = 0
+              return true
+            }
+          }
+        }
+        return false
+      },
+    }
+  })
+}
 
 export function BaloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
-  const isSensorActive = useSharedValue(true)
-  const isPanActive = useSharedValue(false)
-  const knobScale = useDerivedValue(() => {
-    return withSpring(isPanActive.value ? 1 : 0)
-  })
+  const isTouching = useSharedValue(true)
+  const knobScale = useSharedValue(0)
   const { sensor } = useAnimatedSensor(SensorType.ROTATION, {
     interval: 100,
   })
   const aRef = useAnimatedRef<View>()
 
-  useDerivedValue(() => {
-    if (!isSensorActive.value || !aRef) {
-      return
-    }
-    // Angle is max ~90deg
-    const angle = sensor.value.roll * (180 / Math.PI)
-    if (Math.abs(angle) < minAngleToActivateSensor) {
-      isPanActive.value = false
-      return
-    }
-    const size = measure(aRef)
-    const countValue = angle * pointsPerAngle
-
-    isPanActive.value = true
-    x.value = clamp((x.value += countValue), 0, size.width)
-    progress.value = 100 * (x.value / size.width)
-  })
-
   const panGesture = Gesture.Pan()
     .averageTouches(true)
     .activateAfterLongPress(1)
     .onBegin(() => {
-      isSensorActive.value = false
-      isPanActive.value = true
+      isTouching.value = true
+    })
+    .onStart(() => {
+      knobScale.value = withSpring(1)
     })
     .onChange((ev) => {
-      isSensorActive.value = false
       const size = measure(aRef)
       x.value = clamp((x.value += ev.changeX), 0, size.width)
       progress.value = 100 * (x.value / size.width)
     })
     .onEnd(() => {
-      isSensorActive.value = true
-      isPanActive.value = false
+      knobScale.value = withSpring(0)
     })
+    .onFinalize(() => {
+      isTouching.value = false
+    })
+
+  useAnimatedReaction(
+    () => {
+      return isTouching.value ? 0 : GRAVITY * Math.sin(sensor.value.roll)
+    },
+    (gravity) => {
+      if (gravity != 0) {
+        x.value = withGravity({ clamp: [0, 300], acceleration: gravity })
+      }
+    },
+  )
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
