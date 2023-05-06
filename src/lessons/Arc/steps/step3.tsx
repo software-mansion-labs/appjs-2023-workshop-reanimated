@@ -166,7 +166,7 @@ export function ArcLesson() {
   return (
     <Container>
       <Button
-        title="Click me"
+        title="Move"
         onPress={() => {
           setPosition({
             x: Math.random() * 300,
@@ -181,7 +181,7 @@ export function ArcLesson() {
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: colorShades.purple.light,
+    backgroundColor: colorShades.purple.base,
     width: 80,
     height: 80,
     borderRadius: 40,
