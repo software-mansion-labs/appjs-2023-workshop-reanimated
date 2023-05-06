@@ -29,7 +29,7 @@ const tapGesture = Gesture.Tap()
 <details>
 
 <summary>
-create a scale sharedValue starting from 1
+create a `scale` sharedValue starting from 1
 </summary>
 
 ```jsx
@@ -40,7 +40,7 @@ const scale = useSharedValue(1)
 <br />
 <details>
 <summary>
-add onBegin method and change scale value using spring
+add onBegin method and change `scale` value using spring
 </summary>
 
 ```jsx
@@ -66,7 +66,7 @@ add onEnd method to bring back the scale to using spring
 <br />
 <details>
 <summary>
-create a knobStyle using useAnimatedStyle and change the scale and borderWidth by interpolating scale.value [1,2] → [_knobSize / 2, 2]
+create a knobStyle using useAnimatedStyle and change the scale and borderWidth by interpolating scale.value `[1,2] → [layout.knobSize / 2, 2]`
 </summary>
 
 ```jsx
@@ -128,7 +128,7 @@ const tapGesture = Gesture.Tap()
 <details>
 
 <summary>
-create a scale sharedValue starting from 1
+create a `x` sharedValue starting from 1
 </summary>
 
 ```jsx
