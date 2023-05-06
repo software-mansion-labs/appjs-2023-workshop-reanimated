@@ -7,6 +7,7 @@ type LessonRoutes = {
   MarqueeLesson: undefined
   ScrollAnimationLesson: undefined
   SharedElementTransitionDnd: undefined
+  ArcLesson: undefined
 }
 type RouteMeta = {
   name: keyof LessonRoutes
@@ -51,6 +52,11 @@ export const routes: RouteMeta[] = [
     name: 'SharedElementTransitionDnd',
     title: 'SET dnd 👉',
     subtitle: 'Lesson 6 [test]',
+  },
+  {
+    name: 'ArcLesson',
+    title: 'Animate along arc',
+    subtitle: 'Lesson 7 [test]',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }

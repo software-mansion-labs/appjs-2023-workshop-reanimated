@@ -5,11 +5,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 
-import { HomeScreen } from './Home'
-import type { Routes } from './Routes'
+import { ArcLesson } from '../lessons/Arc/Arc'
 import { BaloonSliderLesson } from '../lessons/BaloonSlider/BaloonSlider'
 import { DynamicTabsLesson } from '../lessons/DynamicTabs/DynamicTabs'
 import { ScrollAnimationLesson } from '../lessons/ScrollAnimation/ScrollAnimation'
+import { HomeScreen } from './Home'
+import type { Routes } from './Routes'
 
 const Stack = createNativeStackNavigator<Routes>()
 
@@ -48,6 +49,13 @@ export function MainNavigator() {
       <Stack.Screen
         name="SharedElementTransitionDnd"
         component={SharedElementTransitionDnd}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ArcLesson"
+        component={ArcLesson}
         options={{
           headerShown: false,
         }}
