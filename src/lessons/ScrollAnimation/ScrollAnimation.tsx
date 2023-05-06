@@ -2,31 +2,44 @@ import { Container } from '@components/Container'
 import { alphabet, contacts } from '@lib/mock'
 import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useRef } from 'react'
+import {
+  Image,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
   interpolate,
   measure,
-  scrollTo,
+  runOnJS,
+  runOnUI,
   SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
   withTiming,
 } from 'react-native-reanimated'
+import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 
 type AlphabetLetterProps = {
   index: number
   letter: string
   scrollableIndex: SharedValue<number>
+  onPress: () => void
 }
 
 const AlphabetLetter = ({
   index,
   letter,
   scrollableIndex,
+  onPress,
 }: AlphabetLetterProps) => {
   const posY = useSharedValue(0)
   const styles = useAnimatedStyle(() => {
@@ -41,7 +54,7 @@ const AlphabetLetter = ({
         {
           scale: interpolate(
             scrollableIndex.value,
-            [index - 1.5, index, index + 1.5],
+            [index - 2, index, index + 2],
             [1, 1.5, 1],
             Extrapolate.CLAMP,
           ),
@@ -50,55 +63,90 @@ const AlphabetLetter = ({
     }
   })
   return (
-    <Animated.View
-      style={[
-        {
-          position: 'relative',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'row',
-        },
-        styles,
-      ]}
-      onLayout={(e) => {
-        posY.value = e.nativeEvent.layout.y
-      }}
-    >
-      <Animated.Text
+    <TouchableOpacity onPress={onPress}>
+      <Animated.View
         style={[
           {
-            position: 'absolute',
-            fontFamily: 'Menlo',
-            left: -20,
-            fontWeight: '900',
+            position: 'relative',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
           },
+          styles,
         ]}
+        onLayout={(e) => {
+          posY.value = e.nativeEvent.layout.y
+        }}
       >
-        {alphabet.charAt(index).toUpperCase()}
-      </Animated.Text>
-    </Animated.View>
+        <Animated.Text
+          style={[
+            {
+              position: 'absolute',
+              fontFamily: 'Menlo',
+              left: -20,
+              fontWeight: '900',
+            },
+          ]}
+        >
+          {alphabet.charAt(index).toUpperCase()}
+        </Animated.Text>
+      </Animated.View>
+    </TouchableOpacity>
   )
 }
 
-export function ScrollAnimationLesson() {
-  const scale = useSharedValue(1)
-  const y = useSharedValue(0)
-  const alphabetRef = useAnimatedRef<View>()
-  const scrollViewRef = useAnimatedRef<ScrollView>()
-  const activeIndex = useSharedValue(0)
-  const scrollableIndex = useSharedValue(0)
+const getItemLayout = sectionListGetItemLayout({
+  getItemHeight: () => layout.avatarSize + layout.spacing * 2,
+  getSectionHeaderHeight: () => 50,
+})
 
-  const tapGesture = Gesture.Tap()
-    .maxDuration(100000)
-    .onBegin(() => {
-      scale.value = withSpring(2)
+export function ScrollAnimationLesson() {
+  const y = useSharedValue(0)
+  const scrollableIndex = useSharedValue(0)
+  const isActive = useSharedValue(false)
+  const activeScrollIndex = useSharedValue(0)
+  const knobScale = useDerivedValue(() => {
+    return withSpring(isActive.value ? 1 : 0)
+  })
+
+  const alphabetRef = useAnimatedRef<View>()
+  const scrollViewRef = useRef<SectionList>(null)
+
+  const snapIndicatorTo = (index: number) => {
+    runOnUI(() => {
+      'worklet'
+
+      if (scrollableIndex.value === index || isActive.value) {
+        return
+      }
+
+      const alphabetLayout = measure(alphabetRef)
+      if (!alphabetLayout) {
+        return
+      }
+      const snapBy =
+        (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
+      const snapTo = index * snapBy
+      y.value = withTiming(snapTo)
+      scrollableIndex.value = withTiming(index)
+    })()
+  }
+
+  const scrollToLocation = (index: number) => {
+    scrollViewRef.current?.scrollToLocation({
+      itemIndex: 0,
+      sectionIndex: index,
+      animated: true,
+      viewOffset: 0,
+      viewPosition: 0.5,
     })
-    .onEnd(() => {
-      scale.value = withSpring(1)
-    })
+  }
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
+    .onBegin(() => {
+      isActive.value = true
+    })
     .onChange((ev) => {
       const alphabetLayout = measure(alphabetRef)
       if (!alphabetLayout) {
@@ -113,41 +161,31 @@ export function ScrollAnimationLesson() {
       // letter based on the knob position.
       const snapBy =
         (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
-      const snapToIndex = Math.floor(y.value / snapBy)
+      const snapToIndex = Math.round(y.value / snapBy)
 
       scrollableIndex.value = y.value / snapBy
-      if (snapToIndex === activeIndex.value) {
+      // Ensure that we don't trigger scroll to the same index.
+      if (snapToIndex === activeScrollIndex.value) {
         return
       }
 
       // This is to avoid triggering scrolling to the same index.
-      activeIndex.value = snapToIndex
-      if (contacts[snapToIndex]) {
-        scrollTo(scrollViewRef, 0, contacts[snapToIndex]!.y.value, true)
-      }
+      activeScrollIndex.value = snapToIndex
+
+      runOnJS(scrollToLocation)(snapToIndex)
     })
     .onEnd(() => {
-      const alphabetLayout = measure(alphabetRef)
-      if (!alphabetLayout) {
-        return
-      }
-      // This is snapTo by the same interval. This will snap to the nearest
-      // letter based on the knob position.
-      const snapBy =
-        (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
-      const snapToIndex = Math.floor(y.value / snapBy)
-      const snapTo = snapToIndex * snapBy
-      y.value = withSpring(snapTo)
-      scrollableIndex.value = withTiming(snapToIndex)
-      scale.value = withSpring(1)
+      runOnJS(snapIndicatorTo)(activeScrollIndex.value)
+    })
+    .onFinalize(() => {
+      isActive.value = false
     })
 
-  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
-        scale.value,
-        [1, 2],
+        knobScale.value,
+        [0, 1],
         [layout.knobSize / 2, 2],
         Extrapolate.CLAMP,
       ),
@@ -156,7 +194,7 @@ export function ScrollAnimationLesson() {
           translateY: y.value,
         },
         {
-          scale: scale.value,
+          scale: knobScale.value + 1,
         },
       ],
     }
@@ -165,54 +203,64 @@ export function ScrollAnimationLesson() {
   return (
     <Container centered={false}>
       <View style={{ flex: 1 }}>
-        <ScrollView
+        <SectionList
           contentContainerStyle={{ paddingHorizontal: 40 }}
           ref={scrollViewRef}
-        >
-          {contacts.map(({ index, title, data, y }) => {
+          stickySectionHeadersEnabled={false}
+          // @ts-ignore
+          getItemLayout={getItemLayout}
+          // viewabilityConfig={{
+          //   minimumViewTime: 100,
+          //   itemVisiblePercentThreshold: 100,
+          // }}
+          onViewableItemsChanged={({ viewableItems }) => {
+            const half = Math.floor(viewableItems.length / 2)
+            const section = viewableItems[half]?.section
+            if (!section) {
+              return
+            }
+            const { index } = section
+            snapIndicatorTo(index)
+          }}
+          sections={contacts}
+          renderSectionHeader={({ section: { title } }) => {
             return (
-              <View
-                key={`${title}-${index}`}
-                onLayout={(ev) => {
-                  y.value = ev.nativeEvent.layout.y
-                }}
-              >
+              <View style={{ height: 50 }}>
                 <Text
                   style={{
                     fontSize: 42,
-                    marginVertical: 10,
                     fontWeight: '900',
                   }}
                 >
                   {title}
                 </Text>
-                {data.map((item, index) => {
-                  return (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        padding: 10,
-                      }}
-                      key={`${item.name}-${index}`}
-                    >
-                      <Image
-                        source={{ uri: item.avatar }}
-                        style={{
-                          marginRight: 10,
-                          width: layout.avatarSize,
-                          height: layout.avatarSize,
-                          borderRadius: layout.avatarSize / 2,
-                        }}
-                      />
-                      <Text>{item.name}</Text>
-                    </View>
-                  )
-                })}
               </View>
             )
-          })}
-        </ScrollView>
+          }}
+          renderItem={({ item, index }) => {
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: layout.spacing,
+                  height: layout.avatarSize + layout.spacing * 2,
+                }}
+              >
+                <Image
+                  source={{ uri: item.avatar }}
+                  style={{
+                    marginRight: 10,
+                    width: layout.avatarSize,
+                    height: layout.avatarSize,
+                    borderRadius: layout.avatarSize / 2,
+                  }}
+                />
+                <Text>{item.name}</Text>
+              </View>
+            )
+          }}
+        />
         <View
           style={{
             position: 'absolute',
@@ -221,7 +269,7 @@ export function ScrollAnimationLesson() {
             bottom: layout.indicatorSize,
           }}
         >
-          <GestureDetector gesture={gestures}>
+          <GestureDetector gesture={panGesture}>
             <Animated.View
               style={[styles.knob, animatedStyle]}
               hitSlop={hitSlop}
@@ -244,6 +292,10 @@ export function ScrollAnimationLesson() {
                   letter={alphabet.charAt(i)}
                   index={i}
                   scrollableIndex={scrollableIndex}
+                  onPress={() => {
+                    scrollToLocation(i)
+                    snapIndicatorTo(i)
+                  }}
                 />
               )
             })}
