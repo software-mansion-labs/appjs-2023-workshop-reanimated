@@ -20,17 +20,17 @@ import type { MeasuredDimensions } from 'react-native-reanimated/src/reanimated2
 
 type TabsProps = {
   name: string
-  onPress: (measurements: MeasuredDimensions) => void
+  onActive: (measurements: MeasuredDimensions) => void
   isActiveTabIndex: boolean
 }
 
-const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
+const Tab = memo(({ onActive, name, isActiveTabIndex }: TabsProps) => {
   const tabRef = useAnimatedRef<View>()
   const sendMeasurements = () => {
     runOnUI(() => {
       'worklet'
       const measurements = measure(tabRef)
-      runOnJS(onPress)(measurements)
+      runOnJS(onActive)(measurements)
     })()
   }
 
@@ -59,7 +59,7 @@ const Tab = memo(({ onPress, name, isActiveTabIndex }: TabsProps) => {
       <TouchableOpacity
         onPress={sendMeasurements}
         hitSlop={hitSlop}
-        style={{ marginHorizontal: 8 }}
+        style={{ marginHorizontal: layout.spacing }}
       >
         <Text>{name}</Text>
       </TouchableOpacity>
@@ -135,7 +135,7 @@ export function DynamicTabsLesson({
             key={`tab-${tab}-${index}`}
             name={tab}
             isActiveTabIndex={index === selectedTabIndex}
-            onPress={(measurements) => {
+            onActive={(measurements) => {
               tabMeasurements.value = measurements
               scrollToTab(index)
             }}

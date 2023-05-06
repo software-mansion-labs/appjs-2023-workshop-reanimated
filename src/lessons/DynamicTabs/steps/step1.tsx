@@ -1,20 +1,14 @@
 import { Container } from '@components/Container'
-import { DynamicTabsSlide } from '@components/DynamicTabsSlide'
 import { tabsList } from '@lib/mock'
 import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { memo, useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
-import {
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native-gesture-handler'
+import { memo, useEffect } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, {
   measure,
   runOnJS,
   runOnUI,
-  scrollTo,
   SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
@@ -93,60 +87,35 @@ function Indicator({
 
   return <Animated.View style={[styles.indicator, stylez]} />
 }
-function DynamicTabs({
+export function DynamicTabsLesson({
   selectedTabIndex = 0,
   onChangeTab,
 }: {
   selectedTabIndex?: number
   onChangeTab?: (index: number) => void
 }) {
-  const scrollViewRef = useAnimatedRef<ScrollView>()
   const tabMeasurements = useSharedValue<MeasuredDimensions | null>(null)
 
-  const scrollToTab = (index: number) => {
-    runOnUI(() => {
-      'worklet'
-
-      const scrollViewDimensions: MeasuredDimensions = measure(scrollViewRef)
-
-      if (!scrollViewDimensions || !tabMeasurements.value) {
-        return
-      }
-
-      scrollTo(
-        scrollViewRef,
-        tabMeasurements.value.x -
-          (scrollViewDimensions.width - tabMeasurements.value.width) / 2,
-        0,
-        true,
-      )
-      // Here, you can send the selected tab index to the parent via a callback
-      if (onChangeTab) {
-        runOnJS(onChangeTab)(index)
-      }
-    })()
-  }
-
   return (
-    <ScrollView
-      horizontal
-      style={{ flexGrow: 0 }}
-      contentContainerStyle={styles.scrollViewContainer}
-      ref={scrollViewRef}
-    >
-      {tabsList.map((tab, index) => (
-        <Tab
-          key={`tab-${tab}-${index}`}
-          name={tab}
-          isActiveTabIndex={index === selectedTabIndex}
-          onActive={(measurements) => {
-            tabMeasurements.value = measurements
-            scrollToTab(index)
-          }}
-        />
-      ))}
-      <Indicator selectedTabMeasurements={tabMeasurements} />
-    </ScrollView>
+    <Container>
+      <ScrollView
+        horizontal
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={styles.scrollViewContainer}
+      >
+        {tabsList.map((tab, index) => (
+          <Tab
+            key={`tab-${tab}-${index}`}
+            name={tab}
+            isActiveTabIndex={index === selectedTabIndex}
+            onActive={(measurements) => {
+              tabMeasurements.value = measurements
+            }}
+          />
+        ))}
+        <Indicator selectedTabMeasurements={tabMeasurements} />
+      </ScrollView>
+    </Container>
   )
 }
 
@@ -164,46 +133,3 @@ const styles = StyleSheet.create({
     paddingVertical: layout.spacing * 2,
   },
 })
-
-export function DynamicTabsLesson() {
-  const { width } = useWindowDimensions()
-  const [selectedTabIndex, setSelectedTabIndex] = useState(2)
-  const ref = useRef<FlatList>(null)
-  return (
-    <Container>
-      <DynamicTabs
-        selectedTabIndex={selectedTabIndex}
-        onChangeTab={(index) => {
-          console.log(index, selectedTabIndex)
-          if (index !== selectedTabIndex) {
-            ref.current?.scrollToIndex({
-              index,
-              animated: true,
-            })
-          }
-        }}
-      />
-      <FlatList
-        ref={ref}
-        data={tabsList}
-        keyExtractor={(item) => item}
-        horizontal
-        pagingEnabled
-        initialScrollIndex={selectedTabIndex}
-        getItemLayout={(_, index) => ({
-          length: width,
-          offset: width * index,
-          index,
-        })}
-        onMomentumScrollEnd={(ev) => {
-          setSelectedTabIndex(
-            Math.floor(ev.nativeEvent.contentOffset.x / width),
-          )
-        }}
-        renderItem={({ item }) => {
-          return <DynamicTabsSlide item={item} />
-        }}
-      />
-    </Container>
-  )
-}

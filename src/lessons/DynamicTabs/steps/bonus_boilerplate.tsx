@@ -3,8 +3,8 @@ import { DynamicTabsSlide } from '@components/DynamicTabsSlide'
 import { tabsList } from '@lib/mock'
 import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { memo, useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { memo, useEffect } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 import {
   FlatList,
   ScrollView,
@@ -166,40 +166,19 @@ const styles = StyleSheet.create({
 })
 
 export function DynamicTabsLesson() {
-  const { width } = useWindowDimensions()
-  const [selectedTabIndex, setSelectedTabIndex] = useState(2)
-  const ref = useRef<FlatList>(null)
   return (
     <Container>
       <DynamicTabs
-        selectedTabIndex={selectedTabIndex}
-        onChangeTab={(index) => {
-          console.log(index, selectedTabIndex)
-          if (index !== selectedTabIndex) {
-            ref.current?.scrollToIndex({
-              index,
-              animated: true,
-            })
-          }
+        selectedTabIndex={0}
+        onChangeTab={(tabIndex) => {
+          console.log(`We have ${tabIndex} selected, now what?`)
         }}
       />
       <FlatList
-        ref={ref}
         data={tabsList}
         keyExtractor={(item) => item}
         horizontal
         pagingEnabled
-        initialScrollIndex={selectedTabIndex}
-        getItemLayout={(_, index) => ({
-          length: width,
-          offset: width * index,
-          index,
-        })}
-        onMomentumScrollEnd={(ev) => {
-          setSelectedTabIndex(
-            Math.floor(ev.nativeEvent.contentOffset.x / width),
-          )
-        }}
         renderItem={({ item }) => {
           return <DynamicTabsSlide item={item} />
         }}
