@@ -19,14 +19,14 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-const GRAVITY = 0.001
+const GRAVITY = 9.81 * 100
 
 function withGravity(userConfig) {
   'worklet'
   return defineAnimation(0, () => {
     'worklet'
     const config = {
-      acceleration: 0.998,
+      acceleration: 9.81,
       velocity: 0,
     }
     Object.assign(config, userConfig)
@@ -38,12 +38,22 @@ function withGravity(userConfig) {
       },
       onFrame: (animation, now) => {
         const { lastTimestamp, current, velocity } = animation
-        const { acceleration, clamp } = config
-        const delta = now - lastTimestamp
+        const { acceleration, clamp, staticFriction, kineticFriction } = config
+        const delta = (now - lastTimestamp) / 1000
         animation.current = current + velocity * delta
-        animation.velocity = velocity + acceleration * delta
-
+        animation.velocity =
+          velocity +
+          (acceleration - Math.sign(velocity) * (kineticFriction ?? 0)) * delta
         animation.lastTimestamp = now
+
+        if (
+          staticFriction &&
+          velocity === 0 &&
+          Math.abs(acceleration) < staticFriction
+        ) {
+          animation.velocity = 0
+        }
+
         if (clamp) {
           if (animation.current <= clamp[0]) {
             animation.current = clamp[0]
@@ -68,11 +78,9 @@ function withGravity(userConfig) {
 export function BaloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
-  const isTouching = useSharedValue(true)
+  const isTouching = useSharedValue(false)
   const knobScale = useSharedValue(0)
-  const { sensor } = useAnimatedSensor(SensorType.ROTATION, {
-    interval: 100,
-  })
+  const { sensor } = useAnimatedSensor(SensorType.GRAVITY)
   const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
@@ -98,11 +106,17 @@ export function BaloonSliderLesson() {
 
   useAnimatedReaction(
     () => {
-      return isTouching.value ? 0 : GRAVITY * Math.sin(sensor.value.roll)
+      return isTouching.value ? undefined : GRAVITY * Math.sin(sensor.value.x)
     },
     (gravity) => {
-      if (gravity != 0) {
-        x.value = withGravity({ clamp: [0, 300], acceleration: gravity })
+      if (gravity !== undefined) {
+        const size = measure(aRef)
+        x.value = withGravity({
+          clamp: [0, size.width],
+          acceleration: gravity,
+          staticFriction: 800,
+          kineticFriction: 500,
+        })
       }
     },
   )
