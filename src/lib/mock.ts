@@ -1,5 +1,3 @@
-import { makeMutable } from 'react-native-reanimated'
-
 import { layout } from './theme'
 
 export const tabsList = [
@@ -26,7 +24,7 @@ export const contacts = [...Array(alphabet.length).keys()].map(
       title: letter,
       index: sectionIndex,
       key: `list-${letter}`,
-      y: makeMutable(0),
+      // y: makeMutable(0),
       data: [...Array(Math.floor(Math.random() * 5) + 5).keys()].map((i) => ({
         name: `${letter}-Contact ${i + 1}`,
         avatar: randomAvatar(),
