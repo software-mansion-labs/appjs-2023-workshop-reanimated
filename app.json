@@ -16,21 +16,21 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.catalinmiron.AppjsWorkshop2023"
+      "bundleIdentifier": "com.swmansion.ReanimatedWorkshop2023"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.catalinmiron.AppjsWorkshop2023"
+      "package": "com.swmansion.ReanimatedWorkshop2023"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "cd398fae-2d24-42b3-be9b-3f6a876e1de8"
+        "projectId": "8f723641-4456-4f68-b9bd-73d386c92a38"
       }
     }
   }

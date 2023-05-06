@@ -1,11 +1,10 @@
 {
   "name": "appjsworkshop2023",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start --dev-client",
-    "android": "expo start --android --dev-client",
-    "ios": "expo start --ios --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "eslint . --ext .ts,.tsx  --max-warnings 0",
     "install:simulator": "APP_VARIANT=development eas build:run --platform=ios --latest",
@@ -18,18 +17,19 @@
     "@expo/webpack-config": "^18.0.1",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "expo": "~48.0.11",
+    "expo": "~48.0.15",
     "expo-dev-client": "~2.2.1",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.6",
+    "react-native": "0.71.7",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-reanimated": "^3.1.0",
     "react-native-safe-area-context": "^4.5.1",
     "react-native-screens": "^3.20.0",
     "react-native-section-list-get-item-layout": "^2.2.3",
-    "react-native-web": "~0.18.10"
+    "react-native-web": "~0.18.10",
+    "expo-splash-screen": "~0.18.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
