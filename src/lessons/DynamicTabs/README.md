@@ -306,21 +306,22 @@ create a `ref` for the `FlatList` and use the `imperative` method of the ref: `s
 </summary>
 
 ```tsx
-const ref = useRef<FlatList>(null) < FlatList
-ref =
-  { ref } >
-  (
-    // other props
-    <DynamicTabs
-      // other props
-      onChangeTab={(index) => {
-        ref.current?.scrollToIndex({
-          index,
-          animated: true,
-        })
-      }}
-    />
-  )
+const ref = useRef<FlatList>(null);
+
+<FlatList
+  ref={ref}
+  // other props
+>
+
+<DynamicTabs
+	// other props
+	onChangeTab={(index) => {
+	  ref.current?.scrollToIndex({
+		  index,
+		  animated: true,
+		})
+	}}
+/>
 ```
 
 </details>
