@@ -88,7 +88,7 @@ const AlphabetLetter = ({
             },
           ]}
         >
-          {alphabet.charAt(index).toUpperCase()}
+          {letter.toUpperCase()}
         </Animated.Text>
       </Animated.View>
     </TouchableOpacity>
@@ -209,10 +209,6 @@ export function ScrollAnimationLesson() {
           stickySectionHeadersEnabled={false}
           // @ts-ignore
           getItemLayout={getItemLayout}
-          // viewabilityConfig={{
-          //   minimumViewTime: 100,
-          //   itemVisiblePercentThreshold: 100,
-          // }}
           onViewableItemsChanged={({ viewableItems }) => {
             const half = Math.floor(viewableItems.length / 2)
             const section = viewableItems[half]?.section
