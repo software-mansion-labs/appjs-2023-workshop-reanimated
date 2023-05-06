@@ -13,7 +13,6 @@ import Animated, {
 
 export function CircleGesturesLesson() {
   const scale = useSharedValue(1)
-  const x = useSharedValue(0)
 
   const tapGesture = Gesture.Tap()
     .maxDuration(100000)
@@ -33,9 +32,6 @@ export function CircleGesturesLesson() {
         Extrapolate.CLAMP,
       ),
       transform: [
-        {
-          translateX: x.value,
-        },
         {
           scale: scale.value,
         },
