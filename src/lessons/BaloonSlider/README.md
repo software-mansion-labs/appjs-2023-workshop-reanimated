@@ -4,7 +4,7 @@ _Placeholder_
 
 ## Step 1 – TBD
 
-_Placeholder video_
+You have a
 
 <details>
 <summary>
