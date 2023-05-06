@@ -2,6 +2,7 @@ import { Container } from '@components/Container'
 import { Creators, WorkshopTagLine } from '@components/MockData'
 import * as React from 'react'
 import { View, ViewStyle } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import type { SharedValue } from 'react-native-reanimated'
 import Animated, {
   runOnJS,
@@ -49,9 +50,13 @@ const Marquee = React.memo(
     const [cloneTimes, setCloneTimes] = React.useState(0)
     const anim = useSharedValue(0)
 
-    useFrameCallback(() => {
+    const frame = useFrameCallback(() => {
       anim.value += speed
     }, true)
+
+    const setFrame = (state: boolean) => {
+      frame.setActive(state)
+    }
 
     useAnimatedReaction(
       () => {
@@ -72,46 +77,56 @@ const Marquee = React.memo(
         runOnJS(setCloneTimes)(v * 2)
       },
     )
+
+    const gesture = Gesture.Pan()
+      .onBegin(() => {
+        runOnJS(setFrame)(false)
+      })
+      .onFinalize(() => {
+        runOnJS(setFrame)(true)
+      })
     return (
-      <Animated.View
-        style={style}
-        onLayout={(ev) => {
-          parentWidth.value = ev.nativeEvent.layout.width
-        }}
-      >
-        <Animated.View style={{ flexDirection: 'row', overflow: 'hidden' }}>
-          {
-            // We are adding the text inside a ScrollView because in this way we
-            // ensure that its not going to "wrap".
-          }
-          <Animated.ScrollView horizontal style={{ opacity: 0 }}>
-            <View
-              style={{
-                flexDirection: 'row',
-              }}
-              onLayout={(ev) => {
-                cloneWidth.value = ev.nativeEvent.layout.width
-              }}
-            >
-              {children}
-            </View>
-          </Animated.ScrollView>
-          {cloneTimes > 0 &&
-            [...Array(cloneTimes).keys()].map((index) => {
-              return (
-                <AnimatedClone
-                  key={`clone-${index}`}
-                  index={index}
-                  anim={anim}
-                  cloneWidth={cloneWidth}
-                  spacing={spacing}
-                >
-                  {children}
-                </AnimatedClone>
-              )
-            })}
+      <GestureDetector gesture={gesture}>
+        <Animated.View
+          style={style}
+          onLayout={(ev) => {
+            parentWidth.value = ev.nativeEvent.layout.width
+          }}
+        >
+          <Animated.View style={{ flexDirection: 'row', overflow: 'hidden' }}>
+            {
+              // We are adding the text inside a ScrollView because in this way we
+              // ensure that its not going to "wrap".
+            }
+            <Animated.ScrollView horizontal style={{ opacity: 0 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                }}
+                onLayout={(ev) => {
+                  cloneWidth.value = ev.nativeEvent.layout.width
+                }}
+              >
+                {children}
+              </View>
+            </Animated.ScrollView>
+            {cloneTimes > 0 &&
+              [...Array(cloneTimes).keys()].map((index) => {
+                return (
+                  <AnimatedClone
+                    key={`clone-${index}`}
+                    index={index}
+                    anim={anim}
+                    cloneWidth={cloneWidth}
+                    spacing={spacing}
+                  >
+                    {children}
+                  </AnimatedClone>
+                )
+              })}
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+      </GestureDetector>
     )
   },
 )

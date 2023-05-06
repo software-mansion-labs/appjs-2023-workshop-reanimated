@@ -30,6 +30,32 @@ export function MarqueeLesson() {
   )
 }
 
+const AnimatedClone = ({
+  index,
+  children,
+  anim,
+  cloneWidth,
+  spacing,
+}: React.PropsWithChildren<{
+  index: number
+  anim: SharedValue<number>
+  cloneWidth: SharedValue<number>
+  spacing: number
+}>) => {
+  const stylez = useAnimatedStyle(() => {
+    return {
+      position: 'absolute',
+      left: index * (cloneWidth.value + spacing),
+      transform: [
+        {
+          translateX: -(anim.value % (cloneWidth.value + spacing)),
+        },
+      ],
+    }
+  }, [index, spacing, cloneWidth])
+  return <Animated.View style={stylez}>{children}</Animated.View>
+}
+
 /**
  * Used to animate the given children in a horizontal manner.
  */
@@ -115,29 +141,3 @@ const Marquee = React.memo(
     )
   },
 )
-
-const AnimatedClone = ({
-  index,
-  children,
-  anim,
-  cloneWidth,
-  spacing,
-}: React.PropsWithChildren<{
-  index: number
-  anim: SharedValue<number>
-  cloneWidth: SharedValue<number>
-  spacing: number
-}>) => {
-  const stylez = useAnimatedStyle(() => {
-    return {
-      position: 'absolute',
-      left: index * (cloneWidth.value + spacing),
-      transform: [
-        {
-          translateX: -(anim.value % (cloneWidth.value + spacing)),
-        },
-      ],
-    }
-  }, [index, spacing, cloneWidth])
-  return <Animated.View style={stylez}>{children}</Animated.View>
-}
