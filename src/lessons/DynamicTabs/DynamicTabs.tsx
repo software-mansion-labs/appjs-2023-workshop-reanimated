@@ -2,13 +2,9 @@ import { Container } from '@components/Container'
 import { tabsList } from '@lib/mock'
 import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { memo, useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
-import {
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native-gesture-handler'
+import { memo, useEffect } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, {
   measure,
   runOnJS,
@@ -92,7 +88,7 @@ function Indicator({
 
   return <Animated.View style={[styles.indicator, stylez]} />
 }
-function DynamicTabs({
+export function DynamicTabsLesson({
   selectedTabIndex = 0,
   onChangeTab,
 }: {
@@ -127,26 +123,27 @@ function DynamicTabs({
   }
 
   return (
-    <ScrollView
-      horizontal
-      style={{ flexGrow: 0 }}
-      contentContainerStyle={styles.scrollViewContainer}
-      ref={scrollViewRef}
-    >
-      {tabsList.map((tab, index) => (
-        <Tab
-          key={`tab-${tab}-${index}`}
-          name={tab}
-          isActiveTabIndex={index === selectedTabIndex}
-          onPress={(measurements) => {
-            // setActiveIndex(index)
-            tabMeasurements.value = measurements
-            scrollToTab(index)
-          }}
-        />
-      ))}
-      <Indicator selectedTabMeasurements={tabMeasurements} />
-    </ScrollView>
+    <Container>
+      <ScrollView
+        horizontal
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={styles.scrollViewContainer}
+        ref={scrollViewRef}
+      >
+        {tabsList.map((tab, index) => (
+          <Tab
+            key={`tab-${tab}-${index}`}
+            name={tab}
+            isActiveTabIndex={index === selectedTabIndex}
+            onPress={(measurements) => {
+              tabMeasurements.value = measurements
+              scrollToTab(index)
+            }}
+          />
+        ))}
+        <Indicator selectedTabMeasurements={tabMeasurements} />
+      </ScrollView>
+    </Container>
   )
 }
 
@@ -164,59 +161,3 @@ const styles = StyleSheet.create({
     paddingVertical: layout.spacing * 2,
   },
 })
-
-export function DynamicTabsLesson() {
-  const { width } = useWindowDimensions()
-  const [selectedTabIndex, setSelectedTabIndex] = useState(2)
-  const ref = useRef<FlatList>(null)
-  return (
-    <Container>
-      <DynamicTabs
-        selectedTabIndex={selectedTabIndex}
-        onChangeTab={(index) => {
-          if (index !== selectedTabIndex) {
-            ref.current?.scrollToIndex({
-              index,
-              animated: true,
-            })
-          }
-        }}
-      />
-      <FlatList
-        ref={ref}
-        data={tabsList}
-        keyExtractor={(item) => item}
-        horizontal
-        pagingEnabled
-        initialScrollIndex={selectedTabIndex}
-        getItemLayout={(_, index) => ({
-          length: width,
-          offset: width * index,
-          index,
-        })}
-        onMomentumScrollEnd={(ev) => {
-          setSelectedTabIndex(
-            Math.floor(ev.nativeEvent.contentOffset.x / width),
-          )
-        }}
-        renderItem={({ item }) => {
-          return (
-            <View style={{ width, padding: 20 }}>
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: colorShades.purple.base,
-                  borderRadius: 16,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ color: '#fff' }}>{item}</Text>
-              </View>
-            </View>
-          )
-        }}
-      />
-    </Container>
-  )
-}

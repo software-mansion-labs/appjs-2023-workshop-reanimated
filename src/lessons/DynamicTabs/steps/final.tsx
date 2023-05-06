@@ -89,7 +89,7 @@ function Indicator({
   return <Animated.View style={[styles.indicator, stylez]} />
 }
 export function DynamicTabsLesson({
-  selectedTabIndex = 1,
+  selectedTabIndex = 0,
   onChangeTab,
 }: {
   selectedTabIndex?: number
@@ -136,7 +136,6 @@ export function DynamicTabsLesson({
             name={tab}
             isActiveTabIndex={index === selectedTabIndex}
             onPress={(measurements) => {
-              // setActiveIndex(index)
               tabMeasurements.value = measurements
               scrollToTab(index)
             }}
