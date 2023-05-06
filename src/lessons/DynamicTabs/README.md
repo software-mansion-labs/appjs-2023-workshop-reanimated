@@ -314,13 +314,13 @@ const ref = useRef<FlatList>(null);
 >
 
 <DynamicTabs
-	// other props
-	onChangeTab={(index) => {
-	  ref.current?.scrollToIndex({
-		  index,
-		  animated: true,
-		})
-	}}
+  // other props
+  onChangeTab={(index) => {
+    ref.current?.scrollToIndex({
+      index,
+      animated: true,
+    })
+  }}
 />
 ```
 
@@ -335,12 +335,12 @@ const ref = useRef<FlatList>(null);
 const { width } = useWindowDimensions()
 
 <FlatList
-	// other props
-	getItemLayout={(_, index) => ({
-	  length: width,
-	  offset: width * index,
-	  index,
-	})}
+  // other props
+  getItemLayout={(_, index) => ({
+    length: width,
+    offset: width * index,
+    index,
+  })}
 />
 ```
 
