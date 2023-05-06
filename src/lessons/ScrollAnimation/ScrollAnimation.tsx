@@ -2,15 +2,8 @@ import { Container } from '@components/Container'
 import { alphabet, contacts } from '@lib/mock'
 import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { useRef } from 'react'
-import {
-  Image,
-  SectionList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { useMemo, useRef } from 'react'
+import { Image, SectionList, StyleSheet, Text, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -32,14 +25,12 @@ type AlphabetLetterProps = {
   index: number
   letter: string
   scrollableIndex: SharedValue<number>
-  onPress: () => void
 }
 
 const AlphabetLetter = ({
   index,
   letter,
   scrollableIndex,
-  onPress,
 }: AlphabetLetterProps) => {
   const posY = useSharedValue(0)
   const styles = useAnimatedStyle(() => {
@@ -63,42 +54,35 @@ const AlphabetLetter = ({
     }
   })
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Animated.View
+    <Animated.View
+      style={[
+        {
+          position: 'relative',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'row',
+        },
+        styles,
+      ]}
+      onLayout={(e) => {
+        posY.value = e.nativeEvent.layout.y
+      }}
+    >
+      <Animated.Text
         style={[
           {
-            position: 'relative',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
+            position: 'absolute',
+            fontFamily: 'Menlo',
+            left: -20,
+            fontWeight: '900',
           },
-          styles,
         ]}
-        onLayout={(e) => {
-          posY.value = e.nativeEvent.layout.y
-        }}
       >
-        <Animated.Text
-          style={[
-            {
-              position: 'absolute',
-              fontFamily: 'Menlo',
-              left: -20,
-              fontWeight: '900',
-            },
-          ]}
-        >
-          {letter.toUpperCase()}
-        </Animated.Text>
-      </Animated.View>
-    </TouchableOpacity>
+        {letter.toUpperCase()}
+      </Animated.Text>
+    </Animated.View>
   )
 }
-
-const getItemLayout = sectionListGetItemLayout({
-  getItemHeight: () => layout.avatarSize + layout.spacing * 2,
-  getSectionHeaderHeight: () => 50,
-})
 
 export function ScrollAnimationLesson() {
   const y = useSharedValue(0)
@@ -108,6 +92,13 @@ export function ScrollAnimationLesson() {
   const knobScale = useDerivedValue(() => {
     return withSpring(isInteracting.value ? 1 : 0)
   })
+
+  const getItemLayout = useMemo(() => {
+    return sectionListGetItemLayout({
+      getItemHeight: () => layout.avatarSize + layout.spacing * 2,
+      getSectionHeaderHeight: () => 50,
+    })
+  }, [])
 
   const alphabetRef = useAnimatedRef<View>()
   const scrollViewRef = useRef<SectionList>(null)
@@ -288,10 +279,6 @@ export function ScrollAnimationLesson() {
                   letter={alphabet.charAt(i)}
                   index={i}
                   scrollableIndex={scrollableIndex}
-                  onPress={() => {
-                    scrollToLocation(i)
-                    snapIndicatorTo(i)
-                  }}
                 />
               )
             })}

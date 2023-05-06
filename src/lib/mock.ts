@@ -24,8 +24,7 @@ export const contacts = [...Array(alphabet.length).keys()].map(
       title: letter,
       index: sectionIndex,
       key: `list-${letter}`,
-      // y: makeMutable(0),
-      data: [...Array(Math.floor(Math.random() * 5) + 5).keys()].map((i) => ({
+      data: [...Array(Math.floor(Math.random() * 7) + 5).keys()].map((i) => ({
         name: `${letter}-Contact ${i + 1}`,
         avatar: randomAvatar(),
       })),
