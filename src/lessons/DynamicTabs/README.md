@@ -286,11 +286,12 @@ change `selectedTabIndex` whenever the slide inside the `FlatList` has changed (
 </summary>
 
 ```tsx
-onMomentumScrollEnd={(ev) => {
-  setSelectedTabIndex(
-    Math.floor(ev.nativeEvent.contentOffset.x / width),
-  )
-}}
+<FlatList
+  // other props
+  onMomentumScrollEnd={(ev) => {
+    setSelectedTabIndex(Math.floor(ev.nativeEvent.contentOffset.x / width))
+  }}
+/>
 ```
 
 </details>
@@ -305,16 +306,21 @@ create a `ref` for the `FlatList` and use the `imperative` method of the ref: `s
 </summary>
 
 ```tsx
-const { width } = useWindowDimensions()
-
-<FlatList
-  // other props
-  getItemLayout={(_, index) => ({
-    length: width,
-    offset: width * index,
-    index,
-  })}
-/>
+const ref = useRef<FlatList>(null) < FlatList
+ref =
+  { ref } >
+  (
+    // other props
+    <DynamicTabs
+      // other props
+      onChangeTab={(index) => {
+        ref.current?.scrollToIndex({
+          index,
+          animated: true,
+        })
+      }}
+    />
+  )
 ```
 
 </details>
@@ -325,12 +331,16 @@ const { width } = useWindowDimensions()
 </summary>
 
 ```tsx
-onChangeTab={(index) => {
-  ref.current?.scrollToIndex({
-    index,
-    animated: true,
-  })
-}}
+const { width } = useWindowDimensions()
+
+<FlatList
+	// other props
+	getItemLayout={(_, index) => ({
+	  length: width,
+	  offset: width * index,
+	  index,
+	})}
+/>
 ```
 
 </details>
