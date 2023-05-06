@@ -103,10 +103,10 @@ const getItemLayout = sectionListGetItemLayout({
 export function ScrollAnimationLesson() {
   const y = useSharedValue(0)
   const scrollableIndex = useSharedValue(0)
-  const isActive = useSharedValue(false)
+  const isInteracting = useSharedValue(false)
   const activeScrollIndex = useSharedValue(0)
   const knobScale = useDerivedValue(() => {
-    return withSpring(isActive.value ? 1 : 0)
+    return withSpring(isInteracting.value ? 1 : 0)
   })
 
   const alphabetRef = useAnimatedRef<View>()
@@ -116,7 +116,7 @@ export function ScrollAnimationLesson() {
     runOnUI(() => {
       'worklet'
 
-      if (scrollableIndex.value === index || isActive.value) {
+      if (scrollableIndex.value === index || isInteracting.value) {
         return
       }
 
@@ -136,16 +136,16 @@ export function ScrollAnimationLesson() {
     scrollViewRef.current?.scrollToLocation({
       itemIndex: 0,
       sectionIndex: index,
-      animated: true,
+      animated: false,
       viewOffset: 0,
-      viewPosition: 0.5,
+      viewPosition: 0,
     })
   }
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
     .onBegin(() => {
-      isActive.value = true
+      isInteracting.value = true
     })
     .onChange((ev) => {
       const alphabetLayout = measure(alphabetRef)
@@ -178,7 +178,7 @@ export function ScrollAnimationLesson() {
       runOnJS(snapIndicatorTo)(activeScrollIndex.value)
     })
     .onFinalize(() => {
-      isActive.value = false
+      isInteracting.value = false
     })
 
   const animatedStyle = useAnimatedStyle(() => {
