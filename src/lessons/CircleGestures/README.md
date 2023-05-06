@@ -1,4 +1,4 @@
-# Animated Reactions
+# Circle Gestures
 
 https://user-images.githubusercontent.com/2805320/236633815-8a714b8d-97d0-4b26-b04e-1e1b5bbf8c0d.MP4
 
@@ -272,3 +272,7 @@ const scale = useDerivedValue(() => {
   </details>
 </details>
 <br />
+
+## Next step
+
+**Go to: [Baloon Slider](./src/lessons/BaloonSlider/)**
