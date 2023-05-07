@@ -1,9 +1,11 @@
+import { ContactsListHeader } from '@components/ContactsListHeader'
+import { ContactsListItem } from '@components/ContactsListItem'
 import { Container } from '@components/Container'
-import { alphabet, contacts } from '@lib/mock'
+import { alphabet, contacts, ContactSection } from '@lib/mock'
 import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { useMemo, useRef } from 'react'
-import { Image, SectionList, StyleSheet, Text, View } from 'react-native'
+import { SectionList, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -86,8 +88,8 @@ const AlphabetLetter = ({
 
 export function ScrollAnimationLesson() {
   const y = useSharedValue(0)
-  const scrollableIndex = useSharedValue(0)
   const isInteracting = useSharedValue(false)
+  const scrollableIndex = useSharedValue(0)
   const activeScrollIndex = useSharedValue(0)
   const knobScale = useDerivedValue(() => {
     return withSpring(isInteracting.value ? 1 : 0)
@@ -95,8 +97,8 @@ export function ScrollAnimationLesson() {
 
   const getItemLayout = useMemo(() => {
     return sectionListGetItemLayout({
-      getItemHeight: () => layout.avatarSize + layout.spacing * 2,
-      getSectionHeaderHeight: () => 50,
+      getItemHeight: () => layout.contactListItemHeight,
+      getSectionHeaderHeight: () => layout.contactListSectionHeaderHeight,
     })
   }, [])
 
@@ -195,8 +197,8 @@ export function ScrollAnimationLesson() {
     <Container centered={false}>
       <View style={{ flex: 1 }}>
         <SectionList
-          contentContainerStyle={{ paddingHorizontal: 40 }}
           ref={scrollViewRef}
+          contentContainerStyle={{ paddingHorizontal: layout.spacing * 2 }}
           stickySectionHeadersEnabled={false}
           // @ts-ignore
           getItemLayout={getItemLayout}
@@ -206,46 +208,15 @@ export function ScrollAnimationLesson() {
             if (!section) {
               return
             }
-            const { index } = section
+            const { index } = section as ContactSection
             snapIndicatorTo(index)
           }}
           sections={contacts}
           renderSectionHeader={({ section: { title } }) => {
-            return (
-              <View style={{ height: 50 }}>
-                <Text
-                  style={{
-                    fontSize: 42,
-                    fontWeight: '900',
-                  }}
-                >
-                  {title}
-                </Text>
-              </View>
-            )
+            return <ContactsListHeader title={title} />
           }}
-          renderItem={({ item, index }) => {
-            return (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  padding: layout.spacing,
-                  height: layout.avatarSize + layout.spacing * 2,
-                }}
-              >
-                <Image
-                  source={{ uri: item.avatar }}
-                  style={{
-                    marginRight: 10,
-                    width: layout.avatarSize,
-                    height: layout.avatarSize,
-                    borderRadius: layout.avatarSize / 2,
-                  }}
-                />
-                <Text>{item.name}</Text>
-              </View>
-            )
+          renderItem={({ item }) => {
+            return <ContactsListItem item={item} />
           }}
         />
         <View
