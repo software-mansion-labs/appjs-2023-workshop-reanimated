@@ -18,7 +18,7 @@ function calculateArc(startPt, endPt) {
 
 export function ArcLesson() {
   const start = { x: 100, y: 140 }
-  const end = { x: 200, y: 460 }
+  const end = { x: 250, y: 170 }
 
   return (
     <Container>

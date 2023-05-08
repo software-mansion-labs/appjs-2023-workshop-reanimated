@@ -6,55 +6,50 @@ import { StyleSheet } from 'react-native'
 const MIN_BOUND_DIST = 30
 
 function calculateArc(startPt, endPt) {
-  'worklet'
   const path = Skia.Path.Make()
   path.moveTo(startPt.x, startPt.y)
-
-  const midPt = { x: (startPt.x + endPt.x) / 2, y: (startPt.y + endPt.y) / 2 }
 
   const dx = endPt.x - startPt.x
   const dy = endPt.y - startPt.y
 
-  let boundX = midPt.x,
-    boundY = midPt.y
-
   const dist2 = dx * dx + dy * dy
+
   if (dist2 < 0.5) {
     path.moveTo(endPt.x, endPt.y)
     return path
   }
 
+  const B = { x: (startPt.x + endPt.x) / 2, y: (startPt.y + endPt.y) / 2 }
+
   if (Math.abs(dx) < Math.abs(dy)) {
-    const yDist = Math.abs(dist2 / 2 / dy)
-    boundX = endPt.x
-    boundY = endPt.y < startPt.y ? endPt.y + yDist : endPt.y - yDist
+    B.x = endPt.x
+    B.y = endPt.y - dist2 / 2 / dy
   } else {
-    const xDist = Math.abs(dist2 / 2 / dx)
-    boundX = endPt.x < startPt.x ? endPt.x + xDist : endPt.x - xDist
-    boundY = endPt.y
+    B.x = endPt.x - dist2 / 2 / dx
+    B.y = endPt.y
   }
 
   if (Math.abs(dx) < 0.5) {
-    boundX += endPt.x < startPt.x ? MIN_BOUND_DIST : -MIN_BOUND_DIST
+    B.x += endPt.x < startPt.x ? MIN_BOUND_DIST : -MIN_BOUND_DIST
   } else if (Math.abs(dy) < 0.5) {
-    boundY += endPt.y < startPt.y ? MIN_BOUND_DIST : -MIN_BOUND_DIST
+    B.y += endPt.y < startPt.y ? MIN_BOUND_DIST : -MIN_BOUND_DIST
   }
 
-  const boundDist =
-    (boundX - midPt.x) * (boundX - midPt.x) +
-    (boundY - midPt.y) * (boundY - midPt.y)
+  const midPt = { x: (startPt.x + endPt.x) / 2, y: (startPt.y + endPt.y) / 2 }
+  const BDist2 =
+    (B.x - midPt.x) * (B.x - midPt.x) + (B.y - midPt.y) * (B.y - midPt.y)
 
-  if (boundDist * boundDist < MIN_BOUND_DIST * MIN_BOUND_DIST) {
-    const ratio = MIN_BOUND_DIST / Math.sqrt(boundDist)
-    boundX = midPt.x + (boundX - midPt.x) * ratio
-    boundY = midPt.y + (boundY - midPt.y) * ratio
+  if (BDist2 < MIN_BOUND_DIST * MIN_BOUND_DIST) {
+    // make AB vector length to be at least MIN_BOUND_DIST
+    const ratio = MIN_BOUND_DIST / Math.sqrt(BDist2)
+    B.x = midPt.x + (B.x - midPt.x) * ratio
+    B.y = midPt.y + (B.y - midPt.y) * ratio
   }
 
-  const cp1x = (startPt.x + boundX) / 2
-  const cp1y = (startPt.y + boundY) / 2
-  const cp2x = (endPt.x + boundX) / 2
-  const cp2y = (endPt.y + boundY) / 2
-  path.cubicTo(cp1x, cp1y, cp2x, cp2y, endPt.x, endPt.y)
+  const q1 = { x: (startPt.x + B.x) / 2, y: (startPt.y + B.y) / 2 }
+  const q2 = { x: (endPt.x + B.x) / 2, y: (endPt.y + B.y) / 2 }
+
+  path.cubicTo(q1.x, q1.y, q2.x, q2.y, endPt.x, endPt.y)
 
   return path
 }
