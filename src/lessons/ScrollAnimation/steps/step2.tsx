@@ -1,7 +1,7 @@
 import { ContactsListHeader } from '@components/ContactsListHeader'
 import { ContactsListItem } from '@components/ContactsListItem'
 import { Container } from '@components/Container'
-import { alphabet, contacts, ContactSection } from '@lib/mock'
+import { alphabet, contacts } from '@lib/mock'
 import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { useMemo, useRef } from 'react'
@@ -202,15 +202,6 @@ export function ScrollAnimationLesson() {
           stickySectionHeadersEnabled={false}
           // @ts-ignore
           getItemLayout={getItemLayout}
-          onViewableItemsChanged={({ viewableItems }) => {
-            const half = Math.floor(viewableItems.length / 2)
-            const section = viewableItems[half]?.section
-            if (!section) {
-              return
-            }
-            const { index } = section as ContactSection
-            snapIndicatorTo(index)
-          }}
           sections={contacts}
           renderSectionHeader={({ section: { title } }) => {
             return <ContactsListHeader title={title} />

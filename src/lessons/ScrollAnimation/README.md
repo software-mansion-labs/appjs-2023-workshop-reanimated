@@ -1,10 +1,10 @@
 # Scroll Animation
 
-_Placeholder_
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/2805320/064d6dff-06a0-42fd-b223-ab2adee68ffe
 
 ## Step 1 - Animate Alphabet letters
 
-_Placeholder video_
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/2805320/cfe193d7-f212-45e4-a642-61913f1a0426
 
 To animate the Alphabet letters we need to setup some shared values.
 
@@ -198,7 +198,7 @@ const styles = useAnimatedStyle(() => {
 
 ## Step 2 - Scroll the SectionList
 
-_Placeholder video_
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/2805320/27d33ae5-b3f7-46dd-b48d-1a0bf93bf30f
 
 `SectionList` expose a `scrollToLocation` on the `ref` and we are going to use it. When `knob` position has changed, we’re going to call this method with the rounded index that we’ve calculated. Let’s start implementing this:
 
@@ -256,7 +256,7 @@ runOnJS(scrollToLocation)(snapToIndex)
 
 ## Step 3 - Scroll the SectionList
 
-_Placeholder video_
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/2805320/064d6dff-06a0-42fd-b223-ab2adee68ffe
 
 By now, the `knob` will change scroll inside the `SectionList` (we can call this `Alphabet -> SectionList`) but we would like to control the `knob` position or active letter while scrolling inside `SectionList` (`SectionList → Alphabet`). To do so, we’re going to hook to the `onViewableItemsChange` prop exposed by `SectionList` (Check [onViewableItemsChange](https://reactnative.dev/docs/sectionlist#onviewableitemschanged) method signature.) and get the middle element that visible on the screen, get his section index and use `snapIndicatorTo` to animate the `knob` new position.
 
@@ -282,7 +282,6 @@ onViewableItemsChanged={({ viewableItems }) => {
 </details>
 <br/>
 
-  ## Next step
+## Next step
 
 **Go to: [Shared Element Transition DnD](../SharedElementTransitionDnd/)**
-  
