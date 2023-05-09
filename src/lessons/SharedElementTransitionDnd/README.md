@@ -38,8 +38,9 @@ Let's now jump straight into the shared element transition. :) We are going to e
 <summary>
   <b>[2]</b> use `sharedTransitionTag` in both Home and Details screens
 
-Hint: Because we have a list of images, we need to define an unique tag for each individual image so that Reanimated will match them across different screens.
-Hint2: When navigating from Home -> Details, we're sending the `item` as route param from where you can get the `id` and create the `sharedTransitionTag` that will match the one from the Home screen.
+⚠️ Hint: Because we have a list of images, we need to define an unique tag for each individual image so that Reanimated will match them across different screens.
+<br/>
+⚠️ Hint2: When navigating from `Home -> Details`, we're sending the `item` as route param from where you can get the `id` and create the `sharedTransitionTag` that will match the one from the Home screen.
 
 </summary>
 
@@ -122,15 +123,15 @@ Wrap the `content` with `<GestureDetector />` and apply the `panGesture` that yo
 </details>
 
 <br/>
-Apply the movement based on the translation (`x` and `y`) to the content element, create a derived value `distance` (can be the absolute value of `x` and `y`) and interpolate this value for the `scale` style animation. <br/>
+<b>[4]</b> Apply the movement based on the translation (`x` and `y`) to the content element, create a derived value `distance` (can be the absolute value of `x` and `y`) and interpolate this value for the `scale` style animation. <br/>
 
-Hint: Make `distance` a derived value <br/>
-Hint2: There's an `_overdrag` constant defined, use it for `distance` interpolation
+⚠️ Hint: Make `distance` a derived value <br/>
+⚠️ Hint2: There's an `_overdrag` constant defined, use it for `distance` interpolation
 <br/>
 
 <details>
 <summary>
-  <b>[4]</b> Solution
+  <b>[Solution]</b>
 </summary>
 <br/>
 - create the `animatedStyle` using `useAnimatedStyle` and return change `translateX` and `translateY` with the modified shared values from `panGesture`.
@@ -181,7 +182,6 @@ https://user-images.githubusercontent.com/2805320/236148123-4974ff3c-4a44-43a4-8
 Since we have the derived `distance` value, we can use it to animate the `backdrop` component. Also, when the `distance` is greater than the `_overdrag` we will go back using the `navigation.goBack()`.
 
 <br/>
-Hint: `n
 
 <details>
 <summary>
@@ -206,7 +206,8 @@ const backdropStyle = useAnimatedStyle(() => ({
   <b>[2]</b> We need to go back, so, when gesture end, check if the `distance.value` is greater than `_overDrag` and call `navigation.goBack` otherwise, snap back to position `x` and `y` to `0`.
 
   <br />
-  HINT: Use `runOnJS` to call `goBack`, this is because the gesture is running on `UI thread`
+  ⚠️ Hint: Use `runOnJS` to call `goBack`, this is because the gesture is running on `UI thread`
+  <br/>
 </summary>
 
 ```jsx
