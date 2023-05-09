@@ -27,7 +27,7 @@ ${\Large\frac{|BT|}{|CT|}} = {\Large\frac{|ST|}{|AT|}}$
 We further get that:
 $|BT| = {\Large\frac{|ST|^2}{2|AT|}}$
 
-In addition we know that the distance $|ST|^2$ is expressed as: $|ST|^2 = (x_T - x_S)^2 + (y_T - y_S)^2$ where $(x_T, y_T)$ and $(x_S, y_S)$ are coordinates of points T and S respetively. And that $|AT|$ is expressed as $|AT| = \|y_T - y_A\|$ since x-coordinates of points A and T are the same.
+In addition, we know that the distance $|ST|^2$ is expressed as: $|ST|^2 = (x_T - x_S)^2 + (y_T - y_S)^2$ where $(x_T, y_T)$ and $(x_S, y_S)$ are coordinates of points T and S respetively. And that $|AT|$ is expressed as $|AT| = \|y_T - y_A\|$ since x-coordinates of points A and T are the same.
 
 Finally, we find cubic bezier control points as midpoint between S and B, and B and T. This can be done averaging x and y coordinates of the points in question, e.g.:
 
@@ -765,9 +765,175 @@ We replace build-in layout transition with the new one in our `Animated.View`
 In the final step of this lesson we will explore the Shared Transition API.
 Shared Transitions at its core are very similar to layout transitions (also API-wise), but allow for the transition to be performed across different navigation screens.
 
-In this step we will use `react-navigation` to define a simple Home+Detail screens and perform a transition along a arc between these two.
+In this step we will use `react-navigation` to define a simple Home & Detail screens, and perform a transition along an arc between these two.
 
 ![custom shared transition](https://user-images.githubusercontent.com/726445/236952511-6d7944ef-11bc-4cee-9fe8-235f55b4864e.gif)
+
+In order for certain views to perform a shared transition when navigating between screens, they need to be of `Animated.View` (or other type of animated component class), and specify `sharedTransitionTag` property.
+The component class and the string value of that property needs to match between the two screens that should perform the transition.
+
+Similarily to layout transitions, shared element transitions can be customized as far as the type of animation.
+This can be done by providing a shared transition type via `sharedTransitionStyle` property.
+Note that again, the transition style needs to be the same on the components on both ends.
+
+Writing [custom transition types](https://docs.swmansion.com/react-native-reanimated/docs/api/sharedElementTransitions#custom-animation) is also very similar to how it was done with layout transition API.
+The one difference is that we will use `SharedTransition.custom` helper to create a new shared transition class.
+The worklet that we provide to that helper method needs to only need specify animations for the layout properties.
+Below example illustrates a custom shared element transition that moves the element between its initial and final positions using spring animation:
+
+```js
+const CustomSharedTransition = SharedTransition.custom((values) => {
+  'worklet'
+  return {
+    originX: withSpring(values.targetOriginX),
+    originY: withSpring(values.targetOriginY),
+  }
+})
+```
+
+<details>
+<summary><b>[1]</b> Use <a href="https://reactnavigation.org/docs/native-stack-navigator/">react-navigation with native-stack</a> to create a stack of Home and Detail screens. Move the previous content of ArcLesson to the Home screen and add a button to open Details screen. On the details screen only render the circle.
+</summary>
+
+To use native stack we first add the followin import:
+
+```js
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+```
+
+We can now rename ArcLesson to Home component and add button to push Details screen:
+
+```js
+function Home({ navigation }) {
+  const [position, setPosition] = useState({ x: 100, y: 100 })
+
+  return (
+    <Container>
+      <Button
+        title="Move"
+        onPress={() => {
+          setPosition({
+            x: Math.random() * 300,
+            y: Math.random() * 500,
+          })
+        }}
+      />
+      <Button
+        title="Push"
+        onPress={() => {
+          navigation.push('ArcDetail')
+        }}
+      />
+      <Animated.View
+        layout={ArcLayoutTransition}
+        style={[styles.box, { left: position.x, top: position.y }]}
+      />
+    </Container>
+  )
+}
+```
+
+Now, we define the details screen to just render the circle:
+
+```js
+function Detail() {
+  return (
+    <Container>
+      <Animated.View style={[styles.box, { position: 'relative' }]} />
+    </Container>
+  )
+}
+```
+
+Finally, we create `ArcLesson` component to render the stack consisting of the screens from above:
+
+```js
+const Stack = createNativeStackNavigator()
+
+export function ArcLesson() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="ArcHome" component={Home} />
+      <Stack.Screen name="ArcDetail" component={Detail} />
+    </Stack.Navigator>
+  )
+}
+```
+
+</details><br/>
+
+<details>
+<summary><b>[2]</b> Define a built-in shared transition for the circle component to transfer from Home to Detail screens.
+</summary>
+
+The only thing that's needed is to add the same tag as `sharedTransitionTag` prop for the circle component in both Home and Detail screens:
+
+Here is the change in Home screen:
+
+```js
+<Animated.View
+  layout={ArcLayoutTransition}
+  sharedTransitionTag="circle"
+  style={[styles.box, { left: position.x, top: position.y }]}
+/>
+```
+
+And similar change in Detail screen:
+
+```js
+<Animated.View
+  sharedTransitionTag="circle"
+  style={[styles.box, { position: 'relative' }]}
+/>
+```
+
+</details><br/>
+
+<details>
+<summary><b>[3]</b> Create a custom Shared Element Transition that uses <code>withArcAnimation</code> and use it to animate the circle between screens.
+</summary>
+
+We will use the [custom Shared Transition API](https://docs.swmansion.com/react-native-reanimated/docs/api/sharedElementTransitions#custom-animation) as explained in Reanimated documentation in order to create a `ArcSharedTransition` class:
+
+```js
+export const ArcSharedTransition = SharedTransition.custom((values) => {
+  'worklet'
+  const pathAnimation = withArcAnimation(
+    { x: values.targetOriginX, y: values.targetOriginY },
+    withTiming(1),
+  )
+  return {
+    originX: pathAnimation.x,
+    originY: pathAnimation.y,
+    width: withTiming(values.targetWidth, config),
+    height: withTiming(values.targetHeight, config),
+  }
+})
+```
+
+Finally, we need to set the transition type on the circle component on both ends.
+For the Home screen:
+
+```js
+<Animated.View
+  sharedTransitionTag="circle"
+  layout={ArcLayoutTransition}
+  sharedTransitionStyle={ArcSharedTransition}
+  style={[styles.box, { left: position.x, top: position.y }]}
+/>
+```
+
+And for the Detail screen:
+
+```js
+<Animated.View
+  sharedTransitionTag="circle"
+  sharedTransitionStyle={ArcSharedTransition}
+  style={[styles.box, { position: 'relative' }]}
+/>
+```
+
+</details><br/>
 
 ## Next step
 
