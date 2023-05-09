@@ -148,11 +148,7 @@ add onChange method and change x value based on `changeX`
 })
 ```
 
-<details>
-<summary>
-⚠️ TIP
-</summary>
-The reason why we’re using `changeX` instead of `translationX` is that we would like to start from where we left when the gesture is triggered again (aka when we start panning again), in other words it keeps the knob in place and next time will move from the current position
+⚠️ TIP: The reason why we’re using `changeX` instead of `translationX` is that we would like to start from where we left when the gesture is triggered again (aka when we start panning again), in other words it keeps the knob in place and next time will move from the current position
 
 </details>
 </details>
