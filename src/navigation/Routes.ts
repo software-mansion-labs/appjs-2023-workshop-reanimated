@@ -49,14 +49,14 @@ export const routes: RouteMeta[] = [
     subtitle: 'Lesson 5',
   },
   {
-    name: 'MarqueeLesson',
-    title: 'Marquee 👉',
-    subtitle: 'Lesson 6 [extra bonus]',
+    name: 'ArcLesson',
+    title: 'Animate along arc 👉',
+    subtitle: 'Lesson 6',
   },
   {
-    name: 'ArcLesson',
-    title: 'Animate along arc',
-    subtitle: 'Lesson 7 [test]',
+    name: 'MarqueeLesson',
+    title: 'Marquee 👉',
+    subtitle: 'Lesson 7 [bonus]',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }
