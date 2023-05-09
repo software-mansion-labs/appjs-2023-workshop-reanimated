@@ -34,7 +34,7 @@ Follow one of the sections below for detailed instructions.
 
 ### For iOS simulator
 
-1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/phT7AmUZJsdTwkVZtLW3UF.ipa)
+1. Download Development Client build [from this link](https://storage.googleapis.com/turtle-v2-artifacts/production/4e288b26-ee67-4bcc-b377-19e014217554/ddfad155-dea8-4c18-be00-c70f3aba64ab/application-b50203bd-dcbb-4687-81eb-a6821c8658b1.tar.gz?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20230509%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230509T103403Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=71d72a21277e3fd1b9827faa1c35f9fe67bfbf8730b38a0f179919f0f02bdc26f5edd5cec7b01b75af268be5d3e84975593109fad7ee9b875026417379861bf58b5242d068790a54c4d460e08c20561910853f917b6641d8965bdb45359642b7d11222ae5e110526889279376dcd81d124cc52041666f2ee5646b1611ed6093c67d1aa9112e31fd85084fd9bb5ee0230720472c12576f08f0c813cab3d554c5b6c52d7cbec864a57c120edc2ea75cdd136d1482fde612fe7aa9687ed6da6ad54ded35213c7e3fb93424d1e205aded873d9181a950d28696c3066033f05052740ac2398673d344944be7cb6d4d9b4863d35cfd3e51ba3eb13cb35cbd8fd36ec0d)
 2. Extract `appjsworkshop.app` file from the downloaded archive
 3. Launch your iOS simulator
 4. Drag and drop the `.app` file onto the simulator
@@ -43,13 +43,11 @@ Follow one of the sections below for detailed instructions.
 
 1. Scan the QR code below with your iOS phone:
 
-![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/bc9d96e3-cd03-45a0-a711-1f9f7d010d07](/QRs/ios.svg)
+![https://expo.dev/register-device/1374127c-1559-4652-a0bc-7a773fd4c0bd](/QRs/ios.svg)
 
-2. Click "install" button on the website that the code opens, and confirm with "install" button on the dialog that pops up after that
-3. After app installation is completed navigate to "Settings" > "General" > "VPN & Device Management" section
-4. Tap "650 INDUSTRIES INC." record in the "ENTERPRISE APP" section
-5. Tap "Trust 650 INDUSTRIES INC." on the following page and confirm the selection when prompted
-6. Make sure you can now launch "appjs-workshop" app installed on your phone
+2. Click "Download Profile" button on the website that the code opens, and confirm with "Allow" button on the dialog that pops up after that
+3. Follow the instructions on the website to install the provisioning profile – go to Settings and click "Profile Downloaded", then click "Install" on the dialog.
+4. The above steps will register your device with provisioning profile, after this step you will need to wait for us to create a new development client build that you'll be able to install on your device.
 
 ### For Android emulator
 
@@ -88,7 +86,7 @@ yarn
 expo start --dev-client
 ```
 
-4. The above step will print instructions on how to launch the app on phone or simulator. For iOS siulator you'll need to press "i", for Android press "a", and if you'd like to run the app on a physical device you'll need to scan the QR code that will be displayed on the command line output.
+4. The above step will print instructions on how to launch the app on phone or simulator. For iOS simulator you'll need to press "i", for Android press "a", and if you'd like to run the app on a physical device you'll need to scan the QR code that will be displayed on the command line output.
 
 ## Next step
 
