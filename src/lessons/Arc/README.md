@@ -410,15 +410,354 @@ const style = useAnimatedStyle(() => {
 <details>
 <summary><b>[1]</b> Create an absolutely positioned view that uses `withArcAnimation` to control <code>top</code> and <code>left</code> style attributes. Add a button that updates component state with a random target position for the view.
 </summary>
+
+Inside the screen container, we use `useState` hook to keep the current position of the view:
+
+```js
+const [position, setPosition] = useState({ x: 100, y: 100 })
+```
+
+Next, we prepare animated style that uses `withArcAnimation` following the schema mentioned above, we use basic `withTiming` animation as the progress animation, this can be customized to your liking:
+
+```js
+const animatedStyle = useAnimatedStyle(() => {
+  const animatedPos = withArcAnimation(pp[position], withTiming(1))
+  return {
+    left: animatedPos.x,
+    top: animatedPos.y,
+  }
+})
+```
+
+Finally, we add the button and `Animated.View` component to the screen container. We implement the `onPress` button such that it selects a new position for the view at random. For the `Animated.View` we provide the `animatedStyle` object defined above:
+
+```jsx
+return (
+  <Container>
+    <Animated.View
+      sharedTransitionTag="box"
+      style={[styles.box, animatedStyle]}
+    />
+    <Button
+      title="Move"
+      onPress={() => {
+        setPosition({
+          x: Math.random() * 300,
+          y: Math.random() * 500,
+        })
+      }}
+    />
+  </Container>
+)
+```
+
+To style the button we add a `box` entry to the stylesheet:
+
+```js
+const styles = StyleSheet.create({
+  box: {
+    backgroundColor: colorShades.purple.base,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    position: 'absolute',
+  },
+})
+```
+
 </details>
 
-<summary><b>[2]</b> Implement <code>onStart</code> – remember the starting value provided to the callbacks in order
+<details>
+<summary><b>[2]</b> Implement <code>onStart</code> – remember the starting value provided to the callbacks such that we can use them later to calculate the arc.
 </summary>
+
+For this part we will add a `start` point to the `animatedData` object:
+
+```js
+const animationData = {
+  start: { x: pt.x, y: pt.y },
+}
+```
+
+Next, we will define a method inside `withArcAnimation` that will run the starting logic such that it can be called from both `x` and `y` coordinates animations.
+The method will defer to calling `onStart` on the `progressAnimation` with a correct set of attributes such that the timing is ready to start progressing from `0` to `1`:
+
+```js
+function start(now) {
+  progressAnimation.onStart(progressAnimation, 0, now, undefined)
+}
+```
+
+</details>
+
+<details>
+<summary><b>[3]</b> Implement <code>onFrame</code> – make sure we only run <code>progressTiming</code> once per frame despite the fact it will be accessed for both <code>x</code> and <code>y</code> coordinates.
+</summary>
+
+The `x` and `y` axis are going to run separately.
+To make sure we don't execute path interpolation code twice, we will keep the `currentFrame` value in `animationData`, when we see the frame callback being called for the same frame we will just skip executing any code.
+We will also add some more fields to the `animationData`:
+
+1.  `current` point corresponding to the current position in the arc
+2.  `finished` boolean that indicates whether the animation has finished
+3.  `path` object that will keep the reference to the full path between start and end points
+
+```js
+const animationData = {
+  start: { x: pt.x, y: pt.y },
+  current: pt,
+  path: undefined,
+  finished: false,
+  currentFrame: -1,
+}
+```
+
+Now, we define a new method `maybeRunFrame` that will be used to progress a frame from `x` and `y` `onFrame` callbacks:
+
+```js
+function maybeRunFrame(now) {
+  if (animationData.currentFrame === now) {
+    // we exit immediately if we already have run for this frame
+    return animationData.finished
+  }
+  animationData.currentFrame = now
+
+  if (animationData.start.x === pt.x && animationData.start.y === pt.y) {
+    // when start and end points are the same, this is likely just the initial animation, we don't want to do anything
+    animationData.finished = true
+    progressAnimation.current = 0
+  } else {
+    // run onFrame of the progress animation
+    animationData.finished = progressAnimation.onFrame(progressAnimation, now)
+  }
+
+  if (animationData.path === undefined) {
+    // if path wasn't defined, we calcluate it based on start and end points
+    animationData.path = calculateArc(animationData.start, pt)
+  }
+
+  if (progressAnimation.current === 0) {
+    animationData.current = animationData.start
+  } else if (progressAnimation.current < 1) {
+    animationData.current = animationData.path
+      .copy()
+      .trim(0, progressAnimation.current, false)
+      .getLastPt()
+  } else {
+    animationData.current = pt
+  }
+  return animationData.finished
+}
+```
+
+We also need to update `start` method such that it resets `finished` and `path` objects:
+
+```js
+function start(now) {
+  animationData.finished = false
+  animationData.path = undefined
+  progressAnimation.onStart(progressAnimation, 0, now, undefined)
+}
+```
+
+Finally, we use `maybeRunFrame` to implement `onFrame` for `x` and `y` coord animations (the below code is for the `x` axis only):
+
+```js
+return {
+  onFrame: (animation, now) => {
+    const res = maybeRunFrame(now)
+    animation.current = animationData.current.x
+    return res
+  },
+}
+```
+
+The `withArcAnimation` method in full is presented below:
+
+```js
+export function withArcAnimation(pt, progressAnimation) {
+  'worklet'
+
+  const animationData = {
+    start: { x: pt.x, y: pt.y },
+    current: pt,
+    path: undefined,
+    finished: false,
+    currentFrame: -1,
+  }
+  function start(now) {
+    animationData.finished = false
+    animationData.path = undefined
+    progressAnimation.onStart(progressAnimation, 0, now, undefined)
+  }
+  function maybeRunFrame(now) {
+    if (animationData.currentFrame === now) {
+      return animationData.finished
+    }
+    animationData.currentFrame = now
+
+    if (animationData.start.x === pt.x && animationData.start.y === pt.y) {
+      animationData.finished = true
+      progressAnimation.current = 0
+    } else {
+      animationData.finished = progressAnimation.onFrame(progressAnimation, now)
+    }
+
+    if (animationData.path === undefined) {
+      animationData.path = calculateArc(animationData.start, pt)
+    }
+
+    if (progressAnimation.current === 0) {
+      animationData.current = animationData.start
+    } else if (progressAnimation.current < 1) {
+      animationData.current = animationData.path
+        .copy()
+        .trim(0, progressAnimation.current, false)
+        .getLastPt()
+    } else {
+      animationData.current = pt
+    }
+    return animationData.finished
+  }
+  return {
+    x: defineAnimation(pt.x, () => {
+      'worklet'
+      return {
+        onStart: (_, value, now) => {
+          start(now)
+          animationData.start.x = value
+        },
+        onFrame: (animation, now) => {
+          const res = maybeRunFrame(now)
+          animation.current = animationData.current.x
+          return res
+        },
+      }
+    }),
+    y: defineAnimation(pt.y, () => {
+      'worklet'
+      return {
+        onStart: (_, value, now) => {
+          start(now)
+          animationData.start.y = value
+        },
+        onFrame: (animation, now) => {
+          const res = maybeRunFrame(now)
+          animation.current = animationData.current.y
+          return res
+        },
+      }
+    }),
+  }
+}
+```
+
 </details>
 
 ## Step 4 – Custom layout animation
 
+In this step we will implement the exact same behavior as before, but instead of animating `top` and `left` style properties with `useAnimatedStyle` we will use Reanimated's Layout Animations.
+
+Layout Animations makes it very easy to animate entering/exiting or updating the position.
+In order to use them, you don't need to define animated style, but instead Reanimated will monitor the presence, position and dimensions of the view in question and animate any changes with respect to these attributes in a specified way.
+
+In this exercise we will only look at updating position (and not at exiting or entering animations).
+In order to make animated the position update, we need to specify `layout` attribute for an animated view of which the layout changes.
+You can use one [of the built in animations](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions#predefined-transitions) for layout like [`Layout`](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions#layout) or [`FadingTransition`](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/layoutTransitions#fading-transition), or define a custom transition of your own:
+
+```js
+return <Animated.View layout={Layout}>
+```
+
+In this excercise we will want to use the [custom layout transition API](https://docs.swmansion.com/react-native-reanimated/docs/api/LayoutAnimations/customAnimations#custom-layout-transition) which boils down to defining a function that returns an object consisting of initial values and animations defined for selected attributes.
+The below example defines a custom layout transition that animates position (here denoted by `origin`) using the timing animation.
+
+```js
+function CustomLayoutTransition(values) {
+  'worklet'
+  return {
+    initialValues: {
+      originX: values.currentOriginX,
+      originY: values.currentOriginX,
+    },
+    animations: {
+      originX: withTiming(values.targetOriginX),
+      originY: withTiming(values.targetOriginY),
+    },
+  }
+}
+```
+
 ![custom layout animation](https://user-images.githubusercontent.com/726445/236950413-bf90e410-79a8-4594-a4e8-f0252220535f.gif)
+
+<details>
+<summary><b>[1]</b> Remove animated styles code used perviously and use position state directly with the <code>Aniated.View</code>. Add `layout` property set to one of the predefined animations.
+</summary>
+
+After this change the screen component should look as follows:
+
+```js
+export function ArcLesson() {
+  const [position, setPosition] = useState({ x: 100, y: 100 })
+
+  return (
+    <Container>
+      <Button
+        title="Move"
+        onPress={() => {
+          setPosition({
+            x: Math.random() * 300,
+            y: Math.random() * 500,
+          })
+        }}
+      />
+      <Animated.View
+        layout={Layout}
+        style={[styles.box, { left: position.x, top: position.y }]}
+      />
+    </Container>
+  )
+}
+```
+
+</details>
+
+<details>
+<summary><b>[2]</b> Define custom <code>ArcLayoutTransition</code> that uses <code>withArcAnimation</code> to animate <code>originX</code> and <code>originY</code> attributes.
+</summary>
+
+We follow the custom transition API schema and use `withArcAnimation` with the provided `targetOriginX` and `Y` values as the end point.
+
+```js
+export function ArcLayoutTransition(values) {
+  'worklet'
+  const pathAnimation = withArcAnimation(
+    { x: values.targetOriginX, y: values.targetOriginY },
+    withTiming(1),
+  )
+  return {
+    initialValues: {
+      originX: values.currentOriginX,
+      originY: values.currentOriginY,
+    },
+    animations: {
+      originX: pathAnimation.x,
+      originY: pathAnimation.y,
+    },
+  }
+}
+```
+
+We replace build-in layout transition with the new one in our `Animated.View`
+
+```jsx
+<Animated.View
+  layout={ArcLayoutTransition}
+  style={[styles.box, { left: position.x, top: position.y }]}
+/>
+```
+
+</details>
 
 ## Step 5 – Custom shared transition
 
@@ -427,3 +766,7 @@ const style = useAnimatedStyle(() => {
 ## Next step
 
 **Congratulate yourself, you completed the final lesson 👏👏👏👏**
+
+```
+
+```
