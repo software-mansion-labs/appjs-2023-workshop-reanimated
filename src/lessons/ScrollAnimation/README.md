@@ -12,7 +12,7 @@ We first need to have an `animatedRef` for the `alphabetContainer` in order to g
 
 <details>
 <summary>
-  <b>[1]</b> 1. create a ref using `useAnimatedRef` and add it to the `alphabetContainer`
+  <b>[1]</b> create a ref using `useAnimatedRef` and add it to the `alphabetContainer`
 </summary>
 
 ```jsx
