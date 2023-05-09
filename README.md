@@ -47,7 +47,7 @@ Follow one of the sections below for detailed instructions.
 ![https://expo.dev/register-device/1374127c-1559-4652-a0bc-7a773fd4c0bd](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/0619f950-c03a-4d72-a878-70b1f1f2afdf)
 
 2. Click "Download Profile" button on the website that the code opens, and confirm with "Allow" button on the dialog that pops up after that
-3. Follow the instructions on the website to install the provisioning profile – go to Settings and click "Profile Downloaded", then click "Install" on the dialog.
+3. Follow the instructions on the website to install the provisioning profile – go to Settings and click "Profile Downloaded", then click "Install" on the dialog. If the "Profile downloaded" doesn't show on the main Settings screen, you may see it under "General" > "VPN & Device Management".
 4. The above steps will register your device with provisioning profile, after this step you will need to wait for us to create a new development client build that you'll be able to install on your device.
 
 ### For Android emulator
