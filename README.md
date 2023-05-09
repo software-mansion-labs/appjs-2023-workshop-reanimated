@@ -34,8 +34,8 @@ Follow one of the sections below for detailed instructions.
 
 ### For iOS simulator
 
-1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/phT7AmUZJsdTwkVZtLW3UF.ipa)
-2. Extract `appjsworkshop.app` file from the downloaded archive
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/omoRWYr3CgfSyWxwETxxzk.tar.gz)
+2. Extract `AppjsWorkshop2023.app` file from the downloaded archive
 3. Launch your iOS simulator
 4. Drag and drop the `.app` file onto the simulator
 
