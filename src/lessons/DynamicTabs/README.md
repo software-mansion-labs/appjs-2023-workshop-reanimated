@@ -131,7 +131,7 @@ const tabMeasurements = (useSharedValue < MeasuredDimensions) | (null > null)
 </summary>
 
 ```tsx
-;<Indicator selectedTabMeasurements={tabMeasurements} />
+<Indicator selectedTabMeasurements={tabMeasurements} />
 
 function Indicator({
   selectedTabMeasurements,
