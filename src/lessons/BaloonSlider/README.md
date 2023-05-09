@@ -24,3 +24,7 @@ _Placeholder_
 
 </details>
 <br/>
+
+## Next step
+
+**Go to: [Dynamic Tabs](../DynamicTabs/)**
