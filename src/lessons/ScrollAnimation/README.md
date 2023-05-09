@@ -281,3 +281,8 @@ onViewableItemsChanged={({ viewableItems }) => {
 
 </details>
 <br/>
+
+  ## Next step
+
+**Go to: [Shared Element Transition DnD](../SharedElementTransitionDnd/)**
+  
