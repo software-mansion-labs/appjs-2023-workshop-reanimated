@@ -52,15 +52,14 @@ Follow one of the sections below for detailed instructions.
 
 ### For Android emulator
 
-1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/hpj5oMjmb4Kp95Mu94WXz4.apk)
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/hSt7Y1YYW3yUggD5D9z6ay.apk)
 2. Launch Android emulator on your computer
 3. Drag and drop the downloaded `.apk` file onto emulator
 
 ### For Android device
 
 1. Scan this QR code on your device:
-
-![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/84d376ff-aefb-4339-9403-f571a9a3b259](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/e13906a5-f782-4cd5-96f9-3ded5239ddd9)
+![https://expo.dev/artifacts/eas/hSt7Y1YYW3yUggD5D9z6ay.apk](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/e13906a5-f782-4cd5-96f9-3ded5239ddd9)
 
 2. Tap "install" button on the website that opens after scannig the code
 
