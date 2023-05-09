@@ -5,6 +5,8 @@ export const layout = {
   indicatorSize: 48,
   avatarSize: 36,
   imageHeight: 260,
+  contactListItemHeight: 36 + 8 * 2, // layout.avatarSize + layout.spacing * 2
+  contactListSectionHeaderHeight: 50,
 }
 
 export const colors = {

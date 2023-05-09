@@ -4,7 +4,7 @@ import { Container } from '@components/Container'
 import { alphabet, contacts } from '@lib/mock'
 import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { SectionList, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -66,6 +66,9 @@ const AlphabetLetter = ({
         },
         styles,
       ]}
+      onLayout={(e) => {
+        posY.value = e.nativeEvent.layout.y
+      }}
     >
       <Animated.Text
         style={[
@@ -100,6 +103,7 @@ export function ScrollAnimationLesson() {
   }, [])
 
   const alphabetRef = useAnimatedRef<View>()
+  const scrollViewRef = useRef<SectionList>(null)
 
   const snapIndicatorTo = (index: number) => {
     runOnUI(() => {
@@ -121,6 +125,16 @@ export function ScrollAnimationLesson() {
     })()
   }
 
+  const scrollToLocation = (index: number) => {
+    scrollViewRef.current?.scrollToLocation({
+      itemIndex: 0,
+      sectionIndex: index,
+      animated: false,
+      viewOffset: 0,
+      viewPosition: 0,
+    })
+  }
+
   const panGesture = Gesture.Pan()
     .averageTouches(true)
     .onBegin(() => {
@@ -140,10 +154,9 @@ export function ScrollAnimationLesson() {
       // letter based on the knob position.
       const snapBy =
         (alphabetLayout.height - layout.knobSize) / (alphabet.length - 1)
+      const snapToIndex = Math.round(y.value / snapBy)
 
       scrollableIndex.value = y.value / snapBy
-      const snapToIndex = Math.round(scrollableIndex.value)
-
       // Ensure that we don't trigger scroll to the same index.
       if (snapToIndex === activeScrollIndex.value) {
         return
@@ -151,6 +164,8 @@ export function ScrollAnimationLesson() {
 
       // This is to avoid triggering scrolling to the same index.
       activeScrollIndex.value = snapToIndex
+
+      runOnJS(scrollToLocation)(snapToIndex)
     })
     .onEnd(() => {
       runOnJS(snapIndicatorTo)(activeScrollIndex.value)
@@ -182,6 +197,7 @@ export function ScrollAnimationLesson() {
     <Container centered={false}>
       <View style={{ flex: 1 }}>
         <SectionList
+          ref={scrollViewRef}
           contentContainerStyle={{ paddingHorizontal: layout.spacing * 2 }}
           stickySectionHeadersEnabled={false}
           // @ts-ignore
@@ -209,7 +225,6 @@ export function ScrollAnimationLesson() {
             />
           </GestureDetector>
           <View
-            ref={alphabetRef}
             style={{
               transform: [{ translateX: -layout.indicatorSize / 4 }],
               flex: 1,
@@ -217,6 +232,7 @@ export function ScrollAnimationLesson() {
               justifyContent: 'space-around',
             }}
             pointerEvents="box-none"
+            ref={alphabetRef}
           >
             {[...Array(alphabet.length).keys()].map((i) => {
               return (

@@ -4,7 +4,7 @@ _Placeholder_
 
 ## Step 1 – TBD
 
-_Placeholder video_
+You have a
 
 <details>
 <summary>
@@ -24,3 +24,7 @@ _Placeholder_
 
 </details>
 <br/>
+
+## Next step
+
+**Go to: [Dynamic Tabs](../DynamicTabs/)**

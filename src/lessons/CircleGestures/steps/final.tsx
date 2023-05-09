@@ -7,33 +7,32 @@ import Animated, {
   Extrapolate,
   interpolate,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
 
 export function CircleGesturesLesson() {
-  const scale = useSharedValue(1)
   const x = useSharedValue(0)
+  const isInteracting = useSharedValue(false)
+  const scale = useDerivedValue(() => {
+    return withSpring(isInteracting.value ? 2 : 1)
+  })
 
-  const tapGesture = Gesture.Tap()
-    .maxDuration(100000)
-    .onBegin(() => {
-      scale.value = withSpring(2)
-    })
-    .onEnd(() => {
-      scale.value = withSpring(1)
-    })
-
-  const panGesture = Gesture.Pan()
+  const gesture = Gesture.Pan()
     .averageTouches(true)
+    .onBegin(() => {
+      isInteracting.value = true
+    })
     .onChange((ev) => {
       x.value += ev.changeX
     })
     .onEnd(() => {
       x.value = withSpring(0)
-      scale.value = withSpring(1)
     })
-  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
+    .onFinalize(() => {
+      isInteracting.value = false
+    })
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
@@ -55,7 +54,7 @@ export function CircleGesturesLesson() {
   return (
     <Container>
       <View style={{ flex: 1, justifyContent: 'center' }}>
-        <GestureDetector gesture={gestures}>
+        <GestureDetector gesture={gesture}>
           <Animated.View
             style={[styles.knob, animatedStyle]}
             hitSlop={hitSlop}

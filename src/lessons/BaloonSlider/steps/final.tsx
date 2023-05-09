@@ -18,26 +18,25 @@ import Animated, {
 export function BaloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
-  const isPanActive = useSharedValue(false)
+  const isInteracting = useSharedValue(false)
   const knobScale = useDerivedValue(() => {
-    return withSpring(isPanActive.value ? 1 : 0)
+    return withSpring(isInteracting.value ? 1 : 0)
   })
 
   const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
-    .activateAfterLongPress(1)
     .onBegin(() => {
-      isPanActive.value = true
+      isInteracting.value = true
     })
     .onChange((ev) => {
       const size = measure(aRef)
       x.value = clamp((x.value += ev.changeX), 0, size.width)
       progress.value = 100 * (x.value / size.width)
     })
-    .onEnd(() => {
-      isPanActive.value = false
+    .onFinalize(() => {
+      isInteracting.value = false
     })
 
   const animatedStyle = useAnimatedStyle(() => {

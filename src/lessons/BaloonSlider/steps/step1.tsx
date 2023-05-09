@@ -6,41 +6,43 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
   interpolate,
+  measure,
   useAnimatedRef,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
 
 export function BaloonSliderLesson() {
-  const scale = useSharedValue(1)
   const x = useSharedValue(0)
-
-  const tapGesture = Gesture.Tap()
-    .maxDuration(100000)
-    .onBegin(() => {
-      scale.value = withSpring(2)
-    })
-    .onEnd(() => {
-      scale.value = withSpring(1)
-    })
+  const progress = useSharedValue(0)
+  const isInteracting = useSharedValue(false)
+  const knobScale = useDerivedValue(() => {
+    return withSpring(isInteracting.value ? 1 : 0)
+  })
 
   const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
+    .onBegin(() => {
+      isInteracting.value = true
+    })
     .onChange((ev) => {
+      const size = measure(aRef)
       x.value += ev.changeX
+      progress.value = 100 * (x.value / size.width)
     })
-    .onEnd(() => {
-      scale.value = withSpring(1)
+    .onFinalize(() => {
+      isInteracting.value = false
     })
-  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
-        scale.value,
-        [1, 2],
+        knobScale.value,
+        [0, 1],
         [layout.knobSize / 2, 2],
         Extrapolate.CLAMP,
       ),
@@ -49,7 +51,7 @@ export function BaloonSliderLesson() {
           translateX: x.value,
         },
         {
-          scale: scale.value,
+          scale: knobScale.value + 1,
         },
       ],
     }
@@ -57,7 +59,7 @@ export function BaloonSliderLesson() {
 
   return (
     <Container>
-      <GestureDetector gesture={gestures}>
+      <GestureDetector gesture={panGesture}>
         <View ref={aRef} style={styles.slider} hitSlop={hitSlop}>
           <Animated.View style={[styles.progress, { width: x }]} />
           <Animated.View style={[styles.knob, animatedStyle]} />

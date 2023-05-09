@@ -13,6 +13,7 @@ import Animated, {
 
 export function CircleGesturesLesson() {
   const scale = useSharedValue(1)
+  const x = useSharedValue(0)
 
   const tapGesture = Gesture.Tap()
     .maxDuration(100000)
@@ -23,6 +24,16 @@ export function CircleGesturesLesson() {
       scale.value = withSpring(1)
     })
 
+  const panGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onChange((ev) => {
+      x.value += ev.changeX
+    })
+    .onEnd(() => {
+      x.value = withSpring(0)
+      scale.value = withSpring(1)
+    })
+  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
@@ -33,6 +44,9 @@ export function CircleGesturesLesson() {
       ),
       transform: [
         {
+          translateX: x.value,
+        },
+        {
           scale: scale.value,
         },
       ],
@@ -41,7 +55,7 @@ export function CircleGesturesLesson() {
   return (
     <Container>
       <View style={{ flex: 1, justifyContent: 'center' }}>
-        <GestureDetector gesture={tapGesture}>
+        <GestureDetector gesture={gestures}>
           <Animated.View
             style={[styles.knob, animatedStyle]}
             hitSlop={hitSlop}

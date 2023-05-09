@@ -34,8 +34,8 @@ Follow one of the sections below for detailed instructions.
 
 ### For iOS simulator
 
-1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/phT7AmUZJsdTwkVZtLW3UF.ipa)
-2. Extract `appjsworkshop.app` file from the downloaded archive
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/omoRWYr3CgfSyWxwETxxzk.tar.gz)
+2. Extract `AppjsWorkshop2023.app` file from the downloaded archive
 3. Launch your iOS simulator
 4. Drag and drop the `.app` file onto the simulator
 
@@ -43,17 +43,16 @@ Follow one of the sections below for detailed instructions.
 
 1. Scan the QR code below with your iOS phone:
 
-![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/bc9d96e3-cd03-45a0-a711-1f9f7d010d07](/QRs/ios.svg)
 
-2. Click "install" button on the website that the code opens, and confirm with "install" button on the dialog that pops up after that
-3. After app installation is completed navigate to "Settings" > "General" > "VPN & Device Management" section
-4. Tap "650 INDUSTRIES INC." record in the "ENTERPRISE APP" section
-5. Tap "Trust 650 INDUSTRIES INC." on the following page and confirm the selection when prompted
-6. Make sure you can now launch "appjs-workshop" app installed on your phone
+![https://expo.dev/register-device/1374127c-1559-4652-a0bc-7a773fd4c0bd](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/0619f950-c03a-4d72-a878-70b1f1f2afdf)
+
+2. Click "Download Profile" button on the website that the code opens, and confirm with "Allow" button on the dialog that pops up after that
+3. Follow the instructions on the website to install the provisioning profile – go to Settings and click "Profile Downloaded", then click "Install" on the dialog. If the "Profile downloaded" doesn't show on the main Settings screen, you may see it under "General" > "VPN & Device Management".
+4. The above steps will register your device with provisioning profile, after this step you will need to wait for us to create a new development client build that you'll be able to install on your device.
 
 ### For Android emulator
 
-1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/hpj5oMjmb4Kp95Mu94WXz4.apk)
+1. Download Development Client build [from this link](https://expo.dev/artifacts/eas/hSt7Y1YYW3yUggD5D9z6ay.apk)
 2. Launch Android emulator on your computer
 3. Drag and drop the downloaded `.apk` file onto emulator
 
@@ -61,7 +60,7 @@ Follow one of the sections below for detailed instructions.
 
 1. Scan this QR code on your device:
 
-![https://expo.dev/accounts/catalinmiron/projects/AppjsWorkshop2023/builds/84d376ff-aefb-4339-9403-f571a9a3b259](/QRs/android.svg)
+![https://expo.dev/artifacts/eas/hSt7Y1YYW3yUggD5D9z6ay.apk](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/e13906a5-f782-4cd5-96f9-3ded5239ddd9)
 
 2. Tap "install" button on the website that opens after scannig the code
 
@@ -85,10 +84,10 @@ yarn
 3. Launch the app with Expo CLI:
 
 ```bash
-expo start --dev-client
+yarn start
 ```
 
-4. The above step will print instructions on how to launch the app on phone or simulator. For iOS siulator you'll need to press "i", for Android press "a", and if you'd like to run the app on a physical device you'll need to scan the QR code that will be displayed on the command line output.
+4. The above step will print instructions on how to launch the app on phone or simulator. For iOS simulator you'll need to press "i", for Android press "a", and if you'd like to run the app on a physical device you'll need to scan the QR code that will be displayed on the command line output.
 
 ## Next step
 
