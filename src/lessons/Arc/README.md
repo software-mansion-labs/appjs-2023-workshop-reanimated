@@ -31,9 +31,9 @@ In addition, we know that the distance $|ST|^2$ is expressed as: $|ST|^2 = (x_T 
 
 Finally, we find cubic bezier control points as midpoint between S and B, and B and T. This can be done averaging x and y coordinates of the points in question, e.g.:
 
-$x_{Q_1} = x_S + x_B) / 2$
+$x_{Q_1} = (x_S + x_B) / 2$
 
-$y_{Q_1} = y_S + y_B) / 2$
+$y_{Q_1} = (y_S + y_B) / 2$
 
 where $Q_1 = (x_{Q_1}, y_{Q_1})$ is the control point located between $S = (x_S, y_S)$ and $B = (x_B, y_B)$.
 
@@ -407,6 +407,8 @@ const style = useAnimatedStyle(() => {
 })
 ```
 
+### Tasks
+
 <details>
 <summary><b>[1]</b> Create an absolutely positioned view that uses `withArcAnimation` to control <code>top</code> and <code>left</code> style attributes. Add a button that updates component state with a random target position for the view.
 </summary>
@@ -690,6 +692,8 @@ function CustomLayoutTransition(values) {
 
 ![custom layout animation](https://user-images.githubusercontent.com/726445/236950413-bf90e410-79a8-4594-a4e8-f0252220535f.gif)
 
+### Tasks
+
 <details>
 <summary><b>[1]</b> Remove animated styles code used perviously and use position state directly with the <code>Aniated.View</code>. Add `layout` property set to one of the predefined animations.
 </summary>
@@ -790,6 +794,8 @@ const CustomSharedTransition = SharedTransition.custom((values) => {
   }
 })
 ```
+
+### Tasks
 
 <details>
 <summary><b>[1]</b> Use <a href="https://reactnavigation.org/docs/native-stack-navigator/">react-navigation with native-stack</a> to create a stack of Home and Detail screens. Move the previous content of ArcLesson to the Home screen and add a button to open Details screen. On the details screen only render the circle.
