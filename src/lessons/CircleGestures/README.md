@@ -115,7 +115,7 @@ Create a Pan gesture, combine it with Tap gesture. Using Pan gesture, we can get
 </summary>
 
 ```jsx
-const tapGesture = Gesture.Tap()
+const panGesture = Gesture.Pan()
 ```
 
 </details>
@@ -144,7 +144,7 @@ add onChange method and change x value based on `changeX`
 
 ```jsx
 .onChange((ev) => {
-	x.value += ev.changeX
+  x.value += ev.changeX
 })
 ```
 
@@ -164,7 +164,7 @@ when gesture has finished, bring back the knob `scale` to 1.
 
 ```jsx
 .onEnd(() => {
-	scale.value = withSpring(1)
+  scale.value = withSpring(1)
 })
 ```
 
@@ -180,9 +180,9 @@ const animatedStyle = useAnimatedStyle(() => {
   return {
     borderWidth: //
     transform: [
-			{
-				translateX: x.value  // <--------- here
-			},
+      {
+        translateX: x.value  // <--------- here
+      },
       {
         scale: scale.value,
       },
