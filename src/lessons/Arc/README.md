@@ -185,7 +185,7 @@ function calculateArc(startPt, endPt) {
 }
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[3]</b> Verify that the arc look ok for all possible settings (more horizontal/more vertical, downward/upward, vertical/horizontal line).
@@ -249,7 +249,7 @@ const start = { x: 260, y: 180 }
 const end = { x: 110, y: 180 }
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[BONUS 1]</b> Add minimum convexity for the curve in cases when point B is near the line between S and T (this will result in an almost flat curve)
@@ -286,7 +286,7 @@ if (BDist2 < MIN_BOUND_DIST * MIN_BOUND_DIST) {
 
 Check [steps/step1.tsx](steps/step1.tsx) for the final implementation of the `calculateArc` method.
 
-</details>
+</details><br/>
 
 ## Step 2 – Animating Skia with Reanimated
 
@@ -316,7 +316,7 @@ useEffect(() => {
 }, [])
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[2]</b> Use <code>useDerivedValue</code> that returns a path cropped according to progress value. Use Path’s <a href="https://github.com/Shopify/react-native-skia/blob/main/package/src/skia/types/Path/Path.ts#L357"><code>copy</code></a> and <a href="https://github.com/Shopify/react-native-skia/blob/main/package/src/skia/types/Path/Path.ts#L538"><code>trim</code></a> methods.
@@ -332,7 +332,7 @@ const partOfArc = useDerivedValue(() => {
 })
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[3]</b> Pass derived value to Path component as a prop.
@@ -350,7 +350,7 @@ When used this way, all updates that happen to the shared value (including anima
 />
 ```
 
-</details>
+</details><br/>
 
 ## Step 3 – Custom animation along an arc
 
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
 })
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[2]</b> Implement <code>onStart</code> – remember the starting value provided to the callbacks such that we can use them later to calculate the arc.
@@ -488,7 +488,7 @@ function start(now) {
 }
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[3]</b> Implement <code>onFrame</code> – make sure we only run <code>progressTiming</code> once per frame despite the fact it will be accessed for both <code>x</code> and <code>y</code> coordinates.
@@ -652,7 +652,7 @@ export function withArcAnimation(pt, progressAnimation) {
 }
 ```
 
-</details>
+</details><br/>
 
 ## Step 4 – Custom layout animation
 
@@ -720,7 +720,7 @@ export function ArcLesson() {
 }
 ```
 
-</details>
+</details><br/>
 
 <details>
 <summary><b>[2]</b> Define custom <code>ArcLayoutTransition</code> that uses <code>withArcAnimation</code> to animate <code>originX</code> and <code>originY</code> attributes.
@@ -758,14 +758,22 @@ We replace build-in layout transition with the new one in our `Animated.View`
 ```
 
 </details>
+<br/>
 
 ## Step 5 – Custom shared transition
+
+In the final step of this lesson we will explore the Shared Transition API.
+Shared Transitions at its core are very similar to layout transitions (also API-wise), but allow for the transition to be performed across different navigation screens.
+
+In this step we will use `react-navigation` to define a simple Home+Detail screens and perform a transition along a arc between these two.
 
 ![custom shared transition](https://user-images.githubusercontent.com/726445/236952511-6d7944ef-11bc-4cee-9fe8-235f55b4864e.gif)
 
 ## Next step
 
 **Congratulate yourself, you completed the final lesson 👏👏👏👏**
+
+**If you still have time left you can head to the bonus [Marquee](../Marquee/) lesson**
 
 ```
 
