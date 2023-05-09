@@ -69,11 +69,9 @@ export function withArcAnimation(pt, timing) {
   'worklet'
 
   const animationData = {
-    startPt: {},
-    currentX: 0,
-    currentY: 0,
-    startX: pt.x,
-    startY: pt.y,
+    start: { x: pt.x, y: pt.y },
+    current: pt,
+    path: undefined,
     finished: false,
     currentFrame: -1,
     startTime: 0,
@@ -92,38 +90,42 @@ export function withArcAnimation(pt, timing) {
     if (animationData.currentFrame === now) {
       return animationData.finished
     }
-    const { startX, startY } = animationData
-    if (animationData.path === undefined) {
-      animationData.path = calculateArc({ x: startX, y: startY }, pt)
-    }
     animationData.currentFrame = now
-    animationData.finished = timing.onFrame(timing, now)
-    let lastPathPt
+
+    if (animationData.start.x === pt.x && animationData.start.y === pt.y) {
+      animationData.finished = true
+      timing.current = 0
+    } else {
+      animationData.finished = timing.onFrame(timing, now)
+    }
+
+    if (animationData.path === undefined) {
+      animationData.path = calculateArc(animationData.start, pt)
+    }
+
     if (timing.current === 0) {
-      lastPathPt = { x: startX, y: startY }
+      animationData.current = animationData.start
     } else if (timing.current < 1) {
-      lastPathPt = animationData.path
+      animationData.current = animationData.path
         .copy()
         .trim(0, timing.current, false)
         .getLastPt()
     } else {
-      lastPathPt = { x: pt.x, y: pt.y }
+      animationData.current = pt
     }
-    animationData.currentX = lastPathPt.x
-    animationData.currentY = lastPathPt.y
     return animationData.finished
   }
   return {
     x: defineAnimation(pt.x, () => {
       'worklet'
       return {
-        onStart: (animation, value, now) => {
+        onStart: (_, value, now) => {
           maybeStart(now)
-          animationData.startX = value
+          animationData.start.x = value
         },
         onFrame: (animation, now) => {
           const res = maybeRunFrame(now)
-          animation.current = animationData.currentX
+          animation.current = animationData.current.x
           return res
         },
       }
@@ -131,13 +133,13 @@ export function withArcAnimation(pt, timing) {
     y: defineAnimation(pt.y, () => {
       'worklet'
       return {
-        onStart: (animation, value, now) => {
+        onStart: (_, value, now) => {
           maybeStart(now)
-          animationData.startY = value
+          animationData.start.y = value
         },
         onFrame: (animation, now) => {
           const res = maybeRunFrame(now)
-          animation.current = animationData.currentY
+          animation.current = animationData.current.y
           return res
         },
       }

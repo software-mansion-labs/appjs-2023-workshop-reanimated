@@ -66,11 +66,9 @@ export function withArcAnimation(pt, timing) {
   'worklet'
 
   const animationData = {
-    startPt: {},
-    currentX: 0,
-    currentY: 0,
-    startX: pt.x,
-    startY: pt.y,
+    start: { x: pt.x, y: pt.y },
+    current: pt,
+    path: undefined,
     finished: false,
     currentFrame: -1,
     startTime: 0,
@@ -91,8 +89,7 @@ export function withArcAnimation(pt, timing) {
     }
     animationData.currentFrame = now
 
-    const { startX, startY } = animationData
-    if (startX === pt.x && startY === pt.y) {
+    if (animationData.start.x === pt.x && animationData.start.y === pt.y) {
       animationData.finished = true
       timing.current = 0
     } else {
@@ -100,23 +97,19 @@ export function withArcAnimation(pt, timing) {
     }
 
     if (animationData.path === undefined) {
-      console.log('calculateArc', { x: startX, y: startY }, pt)
-      animationData.path = calculateArc({ x: startX, y: startY }, pt)
+      animationData.path = calculateArc(animationData.start, pt)
     }
 
-    let lastPathPt
     if (timing.current === 0) {
-      lastPathPt = { x: startX, y: startY }
+      animationData.current = animationData.start
     } else if (timing.current < 1) {
-      lastPathPt = animationData.path
+      animationData.current = animationData.path
         .copy()
         .trim(0, timing.current, false)
         .getLastPt()
     } else {
-      lastPathPt = { x: pt.x, y: pt.y }
+      animationData.current = pt
     }
-    animationData.currentX = lastPathPt.x
-    animationData.currentY = lastPathPt.y
     return animationData.finished
   }
   return {
@@ -125,11 +118,11 @@ export function withArcAnimation(pt, timing) {
       return {
         onStart: (_, value, now) => {
           maybeStart(now)
-          animationData.startX = value
+          animationData.start.x = value
         },
         onFrame: (animation, now) => {
           const res = maybeRunFrame(now)
-          animation.current = animationData.currentX
+          animation.current = animationData.current.x
           return res
         },
       }
@@ -139,11 +132,11 @@ export function withArcAnimation(pt, timing) {
       return {
         onStart: (_, value, now) => {
           maybeStart(now)
-          animationData.startY = value
+          animationData.start.y = value
         },
         onFrame: (animation, now) => {
           const res = maybeRunFrame(now)
-          animation.current = animationData.currentY
+          animation.current = animationData.current.y
           return res
         },
       }
