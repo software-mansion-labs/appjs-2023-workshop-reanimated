@@ -354,7 +354,67 @@ When used this way, all updates that happen to the shared value (including anima
 
 ## Step 3 – Custom animation along an arc
 
+In this step we will implement a custom animation using `defineAnimation` API from Reanimated in order to achieve an effect of animating objects along an arc.
+
 ![animate view along arc](https://user-images.githubusercontent.com/726445/236950413-bf90e410-79a8-4594-a4e8-f0252220535f.gif)
+
+We will write our own `withArcAnimation` method that takes a point and timing function and returns a point with separate animations for `x` and `y` coordinates. Each animation will be created using `defineAnimation` helper from Reanimated and will communicate with shared animation data that controlls the progress of moving along a path. For this purpose we will use the following schema:
+
+```js
+export function withArcAnimation(pt, progressAnimation) {
+  'worklet'
+  const arcAnimationData = {
+    // here you can keep some data shared between animations of individual coordinates
+  }
+
+  return {
+    x: defineAnimation(pt.x, () => {
+      'worklet'
+      return {
+        onStart: (_, value, now) => {
+          // remember starting value for X coordinate in shared arcAnimationData
+        },
+        onFrame: (animation, now) => {
+          // use shared arcAnimationData to step path animation and read X coordinate into animation.current
+        },
+      }
+    }),
+    y: defineAnimation(pt.y, () => {
+      'worklet'
+      return {
+        onStart: (_, value, now) => {
+          // remember starting value for Y coordinate in shared arcAnimationData
+        },
+        onFrame: (animation, now) => {
+          // use shared arcAnimationData to step path animation and read X coordinate into animation.current
+        },
+      }
+    }),
+  }
+}
+```
+
+Later on, we will be able to use `withArcAnimation` in `useAnimatedStyle` as follows in order to control `left` and `top` position of a view:
+
+```js
+const style = useAnimatedStyle(() => {
+  // we pass the target point coordinates and timing function to be used to navigate the view along the arc
+  const animatedPt = withArcAnimation(pt, withTiming(1))
+  return {
+    left: animatedPt.x,
+    top: animnatedPt.y,
+  }
+})
+```
+
+<details>
+<summary><b>[1]</b> Create an absolutely positioned view that uses `withArcAnimation` to control <code>top</code> and <code>left</code> style attributes. Add a button that updates component state with a random target position for the view.
+</summary>
+</details>
+
+<summary><b>[2]</b> Implement <code>onStart</code> – remember the starting value provided to the callbacks in order
+</summary>
+</details>
 
 ## Step 4 – Custom layout animation
 
