@@ -6,9 +6,11 @@ import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
+  SensorType,
+  defineAnimation,
   interpolate,
   measure,
-  SensorType,
+  useAnimatedReaction,
   useAnimatedRef,
   useAnimatedSensor,
   useAnimatedStyle,
@@ -17,57 +19,108 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-const minAngleToActivateSensor = 5 //in degrees
-const pointsPerAngle = 0.2
+const GRAVITY = 9.81 * 100
+
+function withGravity(userConfig) {
+  'worklet'
+  return defineAnimation(0, () => {
+    'worklet'
+    const config = {
+      acceleration: 9.81,
+      velocity: 0,
+    }
+    Object.assign(config, userConfig)
+    return {
+      onStart: (animation, value, now, previousAnimation) => {
+        animation.current = value
+        animation.lastTimestamp = previousAnimation?.lastTimestamp ?? now
+        animation.velocity = previousAnimation?.velocity ?? config.velocity
+      },
+      onFrame: (animation, now) => {
+        const { lastTimestamp, current, velocity } = animation
+        const { acceleration, clamp, staticFriction, kineticFriction } = config
+        const delta = (now - lastTimestamp) / 1000
+        animation.current = current + velocity * delta
+        animation.velocity =
+          velocity +
+          (acceleration - Math.sign(velocity) * (kineticFriction ?? 0)) * delta
+        animation.lastTimestamp = now
+
+        if (
+          staticFriction &&
+          velocity === 0 &&
+          Math.abs(acceleration) < staticFriction
+        ) {
+          animation.velocity = 0
+        }
+
+        if (clamp) {
+          if (animation.current <= clamp[0]) {
+            animation.current = clamp[0]
+            if (animation.velocity <= 0) {
+              animation.velocity = 0
+              return true
+            }
+          } else if (animation.current >= clamp[1]) {
+            animation.current = clamp[1]
+            if (animation.velocity >= 0) {
+              animation.velocity = 0
+              return true
+            }
+          }
+        }
+        return false
+      },
+    }
+  })
+}
 
 export function BaloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
-  const isSensorActive = useSharedValue(true)
-  const isPanActive = useSharedValue(false)
-  const knobScale = useDerivedValue(() => {
-    return withSpring(isPanActive.value ? 1 : 0)
-  })
-  const { sensor } = useAnimatedSensor(SensorType.ROTATION, {
-    interval: 100,
-  })
+  const isTouching = useSharedValue(false)
+  const knobScale = useSharedValue(0)
+  const { sensor } = useAnimatedSensor(SensorType.GRAVITY)
   const aRef = useAnimatedRef<View>()
-
-  useDerivedValue(() => {
-    if (!isSensorActive.value || !aRef) {
-      return
-    }
-    // Angle is max ~90deg
-    const angle = sensor.value.roll * (180 / Math.PI)
-    if (Math.abs(angle) < minAngleToActivateSensor) {
-      isPanActive.value = false
-      return
-    }
-    const size = measure(aRef)
-    const countValue = angle * pointsPerAngle
-
-    isPanActive.value = true
-    x.value = clamp((x.value += countValue), 0, size.width)
-    progress.value = 100 * (x.value / size.width)
-  })
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
     .activateAfterLongPress(1)
     .onBegin(() => {
-      isSensorActive.value = false
-      isPanActive.value = true
+      isTouching.value = true
+    })
+    .onStart(() => {
+      knobScale.value = withSpring(1)
     })
     .onChange((ev) => {
-      isSensorActive.value = false
       const size = measure(aRef)
       x.value = clamp((x.value += ev.changeX), 0, size.width)
       progress.value = 100 * (x.value / size.width)
     })
     .onEnd(() => {
-      isSensorActive.value = true
-      isPanActive.value = false
+      knobScale.value = withSpring(0)
     })
+    .onFinalize(() => {
+      isTouching.value = false
+    })
+
+  useAnimatedReaction(
+    () => {
+      return isTouching.value ? undefined : GRAVITY * Math.sin(sensor.value.x)
+    },
+    (gravity) => {
+      if (gravity !== undefined) {
+        const size = measure(aRef)
+        x.value = withGravity({
+          clamp: [0, size.width],
+          acceleration: gravity,
+          staticFriction: 800,
+          kineticFriction: 500,
+        })
+      }
+    },
+  )
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
