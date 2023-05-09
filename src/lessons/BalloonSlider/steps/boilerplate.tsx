@@ -1,13 +1,11 @@
-import { AnimatedText } from '@components/AnimatedText'
 import { Container } from '@components/Container'
-import { clamp, hitSlop } from '@lib/reanimated'
+import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
   interpolate,
-  measure,
   useAnimatedRef,
   useAnimatedStyle,
   useDerivedValue,
@@ -15,9 +13,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-export function BaloonSliderLesson() {
+export function BalloonSliderLesson() {
   const x = useSharedValue(0)
-  const progress = useSharedValue(0)
   const isInteracting = useSharedValue(false)
   const knobScale = useDerivedValue(() => {
     return withSpring(isInteracting.value ? 1 : 0)
@@ -31,9 +28,7 @@ export function BaloonSliderLesson() {
       isInteracting.value = true
     })
     .onChange((ev) => {
-      const size = measure(aRef)
-      x.value = clamp((x.value += ev.changeX), 0, size.width)
-      progress.value = 100 * (x.value / size.width)
+      x.value += ev.changeX
     })
     .onFinalize(() => {
       isInteracting.value = false
@@ -58,52 +53,10 @@ export function BaloonSliderLesson() {
     }
   })
 
-  const balloonSpringyX = useDerivedValue(() => {
-    return withSpring(x.value)
-  })
-
-  const balloonAngle = useDerivedValue(() => {
-    return (
-      90 +
-      (Math.atan2(-layout.indicatorSize * 2, balloonSpringyX.value - x.value) *
-        180) /
-        Math.PI
-    )
-  })
-
-  const balloonStyle = useAnimatedStyle(() => {
-    return {
-      opacity: knobScale.value,
-      transform: [
-        { translateX: balloonSpringyX.value },
-        { scale: knobScale.value },
-        {
-          translateY: interpolate(
-            knobScale.value,
-            [0, 1],
-            [0, -layout.indicatorSize],
-          ),
-        },
-        {
-          rotate: `${balloonAngle.value}deg`,
-        },
-      ],
-    }
-  })
-
   return (
     <Container>
       <GestureDetector gesture={panGesture}>
         <View ref={aRef} style={styles.slider} hitSlop={hitSlop}>
-          <Animated.View style={[styles.balloon, balloonStyle]}>
-            <View style={styles.textContainer}>
-              <AnimatedText
-                text={progress}
-                style={{ color: 'white', fontWeight: '600' }}
-              />
-            </View>
-          </Animated.View>
-          <Animated.View style={[styles.progress, { width: x }]} />
           <Animated.View style={[styles.knob, animatedStyle]} />
         </View>
       </GestureDetector>

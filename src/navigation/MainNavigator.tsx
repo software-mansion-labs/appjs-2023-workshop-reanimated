@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 
 import { ArcLesson } from '../lessons/Arc/Arc'
-import { BaloonSliderLesson } from '../lessons/BaloonSlider/BaloonSlider'
+import { BalloonSliderLesson } from '../lessons/BalloonSlider/BalloonSlider'
 import { DynamicTabsLesson } from '../lessons/DynamicTabs/DynamicTabs'
 import { ScrollAnimationLesson } from '../lessons/ScrollAnimation/ScrollAnimation'
 import { HomeScreen } from './Home'
@@ -39,7 +39,10 @@ export function MainNavigator() {
         name="CircleGesturesLesson"
         component={CircleGesturesLesson}
       />
-      <Stack.Screen name="BaloonSliderLesson" component={BaloonSliderLesson} />
+      <Stack.Screen
+        name="BalloonSliderLesson"
+        component={BalloonSliderLesson}
+      />
       <Stack.Screen name="MarqueeLesson" component={MarqueeLesson} />
       <Stack.Screen name="DynamicTabsLesson" component={DynamicTabsLesson} />
       <Stack.Screen

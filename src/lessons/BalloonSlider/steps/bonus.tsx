@@ -75,7 +75,7 @@ function withGravity(userConfig) {
   })
 }
 
-export function BaloonSliderLesson() {
+export function BalloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
   const isTouching = useSharedValue(false)
