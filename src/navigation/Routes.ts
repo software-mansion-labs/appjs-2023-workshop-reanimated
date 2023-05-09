@@ -40,17 +40,17 @@ export const routes: RouteMeta[] = [
   {
     name: 'ScrollAnimationLesson',
     title: 'Scroll Animation 👉',
-    subtitle: 'Lesson 4 (bonus)',
+    subtitle: 'Lesson 4',
   },
   {
     name: 'SharedElementTransitionDnd',
     title: 'SET dnd 👉',
-    subtitle: 'Lesson 5 [test]',
+    subtitle: 'Lesson 5',
   },
   {
     name: 'MarqueeLesson',
     title: 'Marquee 👉',
-    subtitle: 'Lesson 6 [extra bonux]',
+    subtitle: 'Lesson 6 [extra bonus]',
   },
 ]
 export type Routes = LessonRoutes & { Home: undefined }
