@@ -3,13 +3,19 @@
 In this lesson we will build a nice gesture and sensor based progress bar interaction.
 Along the way we will explore Reanimated's measure, derived value, reactions, sensors, and custom animation APIs.
 
-https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/43bb2b99-5ce3-42c9-a2f4-a3925dc78f7e
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/fd78c816-fe22-4ac3-b822-89be077ecdea
+
 
 ## Step 1 – Create a progress bar
 
 In this step we will turn the code from the previous lesson into a slider with a progress bar:
 
-![progress bar](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/8e1faeb4-cf6b-4ec7-9ad0-c815e2dfc15a)
+
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/758c305d-fe6e-4529-aa54-e51b17f6ffae
+
+
 
 ### Tasks
 
@@ -82,7 +88,11 @@ return <View ref={aref} />
 
 Now you can pass the animated ref object to the `measure` method from Reanimated in order to get the view's position and dimensions.
 
-![progress bar with bounds](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/422d7d87-1e25-4770-93d2-e8da4a1c0ba2)
+
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/bf1a8958-1fe7-422f-bcf8-ad40cd932d0a
+
+
 
 ### Tasks
 
@@ -120,7 +130,11 @@ const panGesture = Gesture.Pan().onChange((ev) => {
 In this step we will render a balloon over the knob that follows the knob movement.
 We will use similar technique to knob scaling in order to animate the balloon in and out when the user is interacting with the knob:
 
-![the balloon](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/7fbbecfa-578e-4981-a460-d9f1d292d922)
+
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/f346fb9b-587e-44a3-b1b0-9e495cb154c7
+
+
 
 ### Tasks
 
@@ -254,7 +268,11 @@ const balloonStyle = useAnimatedStyle(() => {
 
 In this step we will learn how
 
-![animating text](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/2ebcd657-9cf0-4f00-aa59-325b83c80cd4)
+
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/5adb1e1b-cb5f-4d5e-8ea4-3b987d3cddc9
+
+
 
 ### Tasks
 
@@ -302,7 +320,11 @@ return (
 In this step we will add some physics to the balloon movement.
 We will simulate the balloon inertia such that it appears to be attached to the knob from the bottom and leans to the side while following the knob movement.
 
-![balloon physics](https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/5a48ae9c-6078-4085-adc1-91d5c9b20394)
+
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/9c9f7743-d276-46df-92cb-fccc455fb27d
+
+
 
 The technique we are going to use is to create a shared value that will follow the top of the balloon.
 Then use the top and bottom positions to calculate the angle to rotate the balloon view.
