@@ -38,7 +38,7 @@ function withGravity(userConfig) {
       },
       onFrame: (animation, now) => {
         const { lastTimestamp, current, velocity } = animation
-        const { acceleration, clamp, staticFriction, kineticFriction } = config
+        const { acceleration, bounds, staticFriction, kineticFriction } = config
         const delta = (now - lastTimestamp) / 1000
         animation.current = current + velocity * delta
         animation.velocity =
@@ -54,15 +54,15 @@ function withGravity(userConfig) {
           animation.velocity = 0
         }
 
-        if (clamp) {
-          if (animation.current <= clamp[0]) {
-            animation.current = clamp[0]
+        if (bounds) {
+          if (animation.current <= bounds[0]) {
+            animation.current = bounds[0]
             if (animation.velocity <= 0) {
               animation.velocity = 0
               return true
             }
-          } else if (animation.current >= clamp[1]) {
-            animation.current = clamp[1]
+          } else if (animation.current >= bounds[1]) {
+            animation.current = bounds[1]
             if (animation.velocity >= 0) {
               animation.velocity = 0
               return true
@@ -75,7 +75,7 @@ function withGravity(userConfig) {
   })
 }
 
-export function BaloonSliderLesson() {
+export function BalloonSliderLesson() {
   const x = useSharedValue(0)
   const progress = useSharedValue(0)
   const isTouching = useSharedValue(false)
@@ -112,7 +112,7 @@ export function BaloonSliderLesson() {
       if (gravity !== undefined) {
         const size = measure(aRef)
         x.value = withGravity({
-          clamp: [0, size.width],
+          bounds: [0, size.width],
           acceleration: gravity,
           staticFriction: 800,
           kineticFriction: 500,
@@ -144,15 +144,6 @@ export function BaloonSliderLesson() {
     return withSpring(x.value)
   })
 
-  const balloonAngle = useDerivedValue(() => {
-    return (
-      90 +
-      (Math.atan2(-layout.indicatorSize * 2, balloonSpringyX.value - x.value) *
-        180) /
-        Math.PI
-    )
-  })
-
   const balloonStyle = useAnimatedStyle(() => {
     return {
       opacity: knobScale.value,
@@ -167,7 +158,10 @@ export function BaloonSliderLesson() {
           ),
         },
         {
-          rotate: `${balloonAngle.value}deg`,
+          rotate: `${Math.atan2(
+            balloonSpringyX.value - x.value,
+            layout.indicatorSize * 2,
+          )}rad`,
         },
       ],
     }

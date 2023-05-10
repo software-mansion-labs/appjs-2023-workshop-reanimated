@@ -2,7 +2,7 @@ import type { Post } from '@lib/mock'
 
 type LessonRoutes = {
   CircleGesturesLesson: undefined
-  BaloonSliderLesson: undefined
+  BalloonSliderLesson: undefined
   DynamicTabsLesson: undefined
   MarqueeLesson: undefined
   ScrollAnimationLesson: undefined
@@ -29,8 +29,8 @@ export const routes: RouteMeta[] = [
     subtitle: 'Lesson 1',
   },
   {
-    name: 'BaloonSliderLesson',
-    title: 'Baloon Slider 👉',
+    name: 'BalloonSliderLesson',
+    title: 'Balloon Slider 👉',
     subtitle: 'Lesson 2',
   },
   {

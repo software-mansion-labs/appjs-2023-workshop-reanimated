@@ -1,7 +1,7 @@
 import { Container } from '@components/Container'
-import { clamp, hitSlop, radToDeg } from '@lib/reanimated'
+import { hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -14,40 +14,35 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-export function BaloonSliderLesson() {
-  const scale = useSharedValue(1)
+export function BalloonSliderLesson() {
   const x = useSharedValue(0)
-  const balloonScale = useSharedValue(0)
-
-  const tapGesture = Gesture.Tap()
-    .maxDuration(100000)
-    .onBegin(() => {
-      scale.value = withSpring(2)
-      balloonScale.value = withSpring(1)
-    })
-    .onEnd(() => {
-      scale.value = withSpring(1)
-      balloonScale.value = withSpring(0)
-    })
+  const progress = useSharedValue(0)
+  const isInteracting = useSharedValue(false)
+  const knobScale = useDerivedValue(() => {
+    return withSpring(isInteracting.value ? 1 : 0)
+  })
 
   const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
+    .onBegin(() => {
+      isInteracting.value = true
+    })
     .onChange((ev) => {
       const size = measure(aRef)
-      x.value = clamp((x.value += ev.changeX), 0, size.width)
+      x.value += ev.changeX
+      progress.value = 100 * (x.value / size.width)
     })
-    .onEnd(() => {
-      scale.value = withSpring(1)
-      balloonScale.value = withSpring(0)
+    .onFinalize(() => {
+      isInteracting.value = false
     })
-  const gestures = Gesture.Simultaneous(tapGesture, panGesture)
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
-        scale.value,
-        [1, 2],
+        knobScale.value,
+        [0, 1],
         [layout.knobSize / 2, 2],
         Extrapolate.CLAMP,
       ),
@@ -56,31 +51,7 @@ export function BaloonSliderLesson() {
           translateX: x.value,
         },
         {
-          scale: scale.value,
-        },
-      ],
-    }
-  })
-
-  const balloonAngle = useDerivedValue(() => {
-    return 90 + radToDeg(Math.atan2(-layout.indicatorSize * 2, 0))
-  })
-
-  const balloonStyle = useAnimatedStyle(() => {
-    return {
-      opacity: balloonScale.value,
-      transform: [
-        { translateX: x.value },
-        { scale: balloonScale.value },
-        {
-          translateY: interpolate(
-            balloonScale.value,
-            [0, 1],
-            [0, -layout.indicatorSize],
-          ),
-        },
-        {
-          rotate: `${balloonAngle.value}deg`,
+          scale: knobScale.value + 1,
         },
       ],
     }
@@ -88,13 +59,8 @@ export function BaloonSliderLesson() {
 
   return (
     <Container>
-      <GestureDetector gesture={gestures}>
+      <GestureDetector gesture={panGesture}>
         <View ref={aRef} style={styles.slider} hitSlop={hitSlop}>
-          <Animated.View style={[styles.balloon, balloonStyle]}>
-            <View style={styles.textContainer}>
-              <Text style={{ color: 'white', fontWeight: '600' }}>10</Text>
-            </View>
-          </Animated.View>
           <Animated.View style={[styles.progress, { width: x }]} />
           <Animated.View style={[styles.knob, animatedStyle]} />
         </View>

@@ -271,4 +271,4 @@ const scale = useDerivedValue(() => {
 
 ## Next step
 
-**Go to: [Baloon Slider](../BaloonSlider/)**
+**Go to: [Balloon Slider](../BalloonSlider/)**
