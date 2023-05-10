@@ -1,5 +1,5 @@
 import { Container } from '@components/Container'
-import { clamp, hitSlop, radToDeg } from '@lib/reanimated'
+import { clamp, hitSlop } from '@lib/reanimated'
 import { colorShades, layout } from '@lib/theme'
 import { StyleSheet, Text, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -9,7 +9,6 @@ import Animated, {
   measure,
   useAnimatedRef,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
@@ -62,10 +61,6 @@ export function BalloonSliderLesson() {
     }
   })
 
-  const balloonAngle = useDerivedValue(() => {
-    return 90 + radToDeg(Math.atan2(-layout.indicatorSize * 2, 0))
-  })
-
   const balloonStyle = useAnimatedStyle(() => {
     return {
       opacity: balloonScale.value,
@@ -78,9 +73,6 @@ export function BalloonSliderLesson() {
             [0, 1],
             [0, -layout.indicatorSize],
           ),
-        },
-        {
-          rotate: `${balloonAngle.value}deg`,
         },
       ],
     }
