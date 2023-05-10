@@ -3,6 +3,8 @@
 In this lesson we will build a nice gesture and sensor based progress bar interaction.
 Along the way we will explore Reanimated's measure, derived value, reactions, sensors, and custom animation APIs.
 
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/43bb2b99-5ce3-42c9-a2f4-a3925dc78f7e
+
 ## Step 1 – Create a progress bar
 
 In this step we will turn the code from the previous lesson into a slider with a progress bar:
@@ -426,6 +428,8 @@ seAnimatedReaction(
   },
 )
 ```
+  
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/43bb2b99-5ce3-42c9-a2f4-a3925dc78f7e
 
 ### Tasks
 
