@@ -14,16 +14,16 @@ import Animated, {
 } from 'react-native-reanimated'
 
 export function BalloonSliderLesson() {
-  const scale = useSharedValue(1)
   const x = useSharedValue(0)
+  const knobScale = useSharedValue(1)
 
   const tapGesture = Gesture.Tap()
     .maxDuration(100000)
-    .onBegin(() => {
-      scale.value = withSpring(2)
+    .onStart(() => {
+      knobScale.value = withSpring(1)
     })
     .onEnd(() => {
-      scale.value = withSpring(1)
+      knobScale.value = withSpring(0)
     })
 
   const aRef = useAnimatedRef<View>()
@@ -35,14 +35,14 @@ export function BalloonSliderLesson() {
       x.value = clamp((x.value += ev.changeX), 0, size.width)
     })
     .onEnd(() => {
-      scale.value = withSpring(1)
+      knobScale.value = withSpring(1)
     })
   const gestures = Gesture.Simultaneous(tapGesture, panGesture)
   const animatedStyle = useAnimatedStyle(() => {
     return {
       borderWidth: interpolate(
-        scale.value,
-        [1, 2],
+        knobScale.value,
+        [0, 1],
         [layout.knobSize / 2, 2],
         Extrapolate.CLAMP,
       ),
@@ -51,7 +51,7 @@ export function BalloonSliderLesson() {
           translateX: x.value,
         },
         {
-          scale: scale.value,
+          scale: knobScale.value,
         },
       ],
     }

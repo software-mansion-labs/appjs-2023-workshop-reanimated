@@ -6,36 +6,28 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
   interpolate,
-  measure,
   useAnimatedRef,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
 
 export function BalloonSliderLesson() {
   const x = useSharedValue(0)
-  const progress = useSharedValue(0)
-  const isInteracting = useSharedValue(false)
-  const knobScale = useDerivedValue(() => {
-    return withSpring(isInteracting.value ? 1 : 0)
-  })
+  const knobScale = useSharedValue(0)
 
   const aRef = useAnimatedRef<View>()
 
   const panGesture = Gesture.Pan()
     .averageTouches(true)
-    .onBegin(() => {
-      isInteracting.value = true
+    .onStart(() => {
+      knobScale.value = withSpring(1)
     })
     .onChange((ev) => {
-      const size = measure(aRef)
       x.value += ev.changeX
-      progress.value = 100 * (x.value / size.width)
     })
-    .onFinalize(() => {
-      isInteracting.value = false
+    .onEnd(() => {
+      knobScale.value = withSpring(0)
     })
 
   const animatedStyle = useAnimatedStyle(() => {

@@ -14,8 +14,8 @@ import Animated, {
 } from 'react-native-reanimated'
 
 export function BalloonSliderLesson() {
-  const scale = useSharedValue(1)
   const x = useSharedValue(0)
+  const scale = useSharedValue(1)
   const balloonScale = useSharedValue(0)
 
   const tapGesture = Gesture.Tap()
