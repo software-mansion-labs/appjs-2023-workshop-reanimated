@@ -1,6 +1,7 @@
 # Balloon Slider
 
-_Placeholder_
+In this lesson we will build a nice gesture and sensor based progress bar interaction.
+Along the way we will explore Reanimated's measure, derived value, reactions, sensors, and custom animation APIs.
 
 ## Step 1 – Create a progress bar
 
