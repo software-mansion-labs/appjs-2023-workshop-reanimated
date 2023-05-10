@@ -451,7 +451,11 @@ seAnimatedReaction(
 )
 ```
   
-https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/726445/43bb2b99-5ce3-42c9-a2f4-a3925dc78f7e
+
+https://github.com/software-mansion-labs/appjs-2023-workshop-reanimated/assets/39658211/6ad59da2-f156-4d13-87c5-320213e0b97b
+
+
+
 
 ### Tasks
 
