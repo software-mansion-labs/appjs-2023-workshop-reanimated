@@ -602,7 +602,7 @@ return {
 
 <details>
 <summary>
-  <b>[1 BONUS]</b> Add static friction to the gravity animation such that the know does not start moving immediately and with low device angles.
+  <b>[BONUS 1]</b> Add static friction to the gravity animation such that the know does not start moving immediately and with low device angles.
 </summary>
 
 Just check [steps/final.tsx](./steps/final.tsx) – this is the final step 🤷
@@ -612,15 +612,3 @@ Just check [steps/final.tsx](./steps/final.tsx) – this is the final step 🤷
 ## Next step
 
 **Go to: [Dynamic Tabs](../DynamicTabs/)**
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```

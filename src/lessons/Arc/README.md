@@ -946,7 +946,3 @@ And for the Detail screen:
 **Congratulate yourself, you completed the final lesson 👏👏👏👏**
 
 **If you still have time left you can head to the bonus [Marquee](../Marquee/) lesson**
-
-```
-
-```
